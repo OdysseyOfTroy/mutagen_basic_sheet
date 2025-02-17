@@ -1,7 +1,10 @@
 mod character;
 
-use character::Character;
+use character::CharacterApp;
+use eframe;
+
+
 fn main() {
-    let character = Character::new("Eve", "Nova", 1, 33, 31, 51, 33, 45, 57,);
-    character.display();
+    let options = eframe::NativeOptions::default();
+    eframe::run_native("Mutagen Character Sheet", options, Box::new(|_cc| Box::new(CharacterApp::default()))).unwrap();
 }

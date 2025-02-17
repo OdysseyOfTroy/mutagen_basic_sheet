@@ -1,5 +1,6 @@
-use std::fmt;
+use eframe::{self, egui::{self, Context}};
 
+#[derive(Default)]
 pub struct Character {
     name: String,
     class: String,
@@ -12,50 +13,39 @@ pub struct Character {
     will: u8,
 }
 
-impl Character {
-    pub fn new(
-        name: &str,
-        class: &str,
-        threat: u8,
-        strength: u8,
-        discipline: u8,
-        constitution: u8,
-        intelligence: u8,
-        sense: u8,
-        will: u8,
-    ) -> Self {
-        Self {
-            name: name.to_string(),
-            class: class.to_string(),
-            threat,
-            strength,
-            discipline,
-            constitution,
-            intelligence,
-            sense,
-            will,
-        }
-    }
+pub struct CharacterApp {
+    character: Character
+}
 
-    pub fn display(&self) {
-        println!("{}", self);
+impl Default for CharacterApp {
+    fn default() -> Self {
+        Self { character: Character::default(),
+        }
     }
 }
 
-impl fmt::Display for Character {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "Character Sheet:\nName: {}\nclass: {}\nthreat: {}\nstrength: {}\ndiscipline: {}\nconstitution: {}\nintelligence: {}\nsense: {}\nwill: {}",
-            self.name,
-            self.class,
-            self.threat,
-            self.strength,
-            self.discipline,
-            self.constitution,
-            self.intelligence,
-            self.sense,
-            self.will,
-        )
+impl eframe::App for CharacterApp{
+    fn update(&mut self, ctx:&Context , _frame: &mut eframe::Frame) {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            ui.heading("Mutagen Character Sheet");
+            ui.label("Name:");
+            ui.text_edit_singleline(&mut self.character.name);
+            ui.label("Class:");
+            ui.text_edit_singleline(&mut self.character.class);
+            ui.label("Threat Level:");
+            ui.add(egui::Slider::new(&mut self.character.threat, 1..=100));
+            ui.label("Strength:");
+            ui.add(egui::Slider::new(&mut self.character.strength, 1..=100));
+            ui.label("Discipline:");
+            ui.add(egui::Slider::new(&mut self.character.discipline, 1..=100));
+            ui.label("Constitution:");
+            ui.add(egui::Slider::new(&mut self.character.constitution, 1..=100));
+            ui.label("Intelligence:");
+            ui.add(egui::Slider::new(&mut self.character.intelligence, 1..=100));
+            ui.label("Sense:");
+            ui.add(egui::Slider::new(&mut self.character.sense, 1..=100));
+            ui.label("Will:");
+            ui.add(egui::Slider::new(&mut self.character.will, 1..=100));
+        });
     }
 }
