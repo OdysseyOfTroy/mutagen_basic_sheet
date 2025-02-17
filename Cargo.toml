@@ -1,0 +1,6 @@
+[package]
+name = "mutagen_basic_sheet"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
