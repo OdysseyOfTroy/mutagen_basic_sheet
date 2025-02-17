@@ -1,3 +1,7 @@
+mod character;
+
+use character::Character;
 fn main() {
-    println!("Hello, world!");
+    let character = Character::new("Eve", "Nova", 1, 33, 31, 51, 33, 45, 57,);
+    character.display();
 }
