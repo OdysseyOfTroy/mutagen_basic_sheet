@@ -74,7 +74,7 @@ impl eframe::App for CharacterApp{
             ui.label("main trait:");
             ui.add(Label::new(&self.character.mutation.main_trait));
             ui.label("Threat Level:");
-            ui.add(egui::Slider::new(&mut self.character.threat, 1..=20));
+            ui.add(egui::Slider::new(&mut self.character.threat, 1..=10));
             ui.label("Strength:");
             ui.add(egui::Slider::new(&mut self.character.strength, 1..=100));
             ui.label("Discipline:");
