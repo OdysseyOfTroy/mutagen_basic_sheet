@@ -2,28 +2,49 @@ mod character;
 mod mutation;
 
 
+use std::{fs::File, path::PathBuf};
+
 use character::Character;
-use eframe::{egui::{self, Context, Label}, CreationContext};
+use eframe::egui::{self, menu, Label};
+use egui_file_dialog::{DialogMode, FileDialog};
 use mutation::Mutations;
 
 struct CharacterApp {
     character: Character,
     mutations: Mutations,
     selected_mutation_trait: String,
+    file_dialog: FileDialog,
+    picked_file: Option<PathBuf>,
 }
 
-impl Default for CharacterApp {
-    fn default() -> Self {
+impl CharacterApp {
+    fn new(_cc: &eframe::CreationContext) -> Self {
         let character = Character::from_json("character.json").unwrap_or_default();
         let mutations = Mutations::from_json("src/base_data/classes.json").unwrap_or_default();
         let selected_mutation_trait = String::new();
         if mutations.options.is_empty() {println!("options is empty")}
-        Self { character, mutations, selected_mutation_trait }
+        Self { character, mutations, selected_mutation_trait, file_dialog: FileDialog::new(), picked_file: None}
     }
 }
 
 impl eframe::App for CharacterApp{
-    fn update(&mut self, ctx:&Context , _frame: &mut eframe::Frame) {
+    fn update(&mut self, ctx: &egui::Context , _frame: &mut eframe::Frame) {
+        egui::TopBottomPanel::top("menu").show(ctx, |ui| {
+            if ui.button("Pick file").clicked() {
+                // Open the file dialog to pick a file.
+                self.file_dialog.pick_file();
+            }
+
+            ui.label(format!("Picked file: {:?}", self.picked_file));
+
+            // Update the dialog
+            self.file_dialog.update(ctx);
+
+            // Check if the user picked a file.
+            if let Some(path) = self.file_dialog.take_picked() {
+                self.picked_file = Some(path.to_path_buf());
+            }
+        });
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Mutagen Character Sheet");
             ui.label("Name:");
@@ -39,8 +60,6 @@ impl eframe::App for CharacterApp{
                 });
             ui.label("main trait:");
             ui.add(Label::new(&self.selected_mutation_trait));
-            // ui.label("Class:");
-            // ui.text_edit_singleline(&mut self.character.class);
             ui.label("Threat Level:");
             ui.add(egui::Slider::new(&mut self.character.threat, 1..=20));
             ui.label("Strength:");
@@ -55,10 +74,9 @@ impl eframe::App for CharacterApp{
             ui.add(egui::Slider::new(&mut self.character.sense, 1..=100));
             ui.label("Will:");
             ui.add(egui::Slider::new(&mut self.character.will, 1..=100));
-        });
-    }
+        });}
 }
 fn main() -> eframe::Result<()> {
-    let options = eframe::NativeOptions::default();
-    eframe::run_native("Mutagen Character Creature", options, Box::new(|_cc: &CreationContext| Ok(Box::new(CharacterApp::default()))))
+    eframe::run_native("Mutagen Character Creature", eframe::NativeOptions::default(),
+     Box::new(|ctx| Ok(Box::new(CharacterApp::new(ctx)))))
 }
