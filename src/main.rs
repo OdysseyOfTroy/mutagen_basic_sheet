@@ -13,7 +13,8 @@ struct CharacterApp {
     mutations: Mutations,
     selected_mutation_trait: String,
     file_dialog: FileDialog,
-    picked_file: Option<PathBuf>,
+    picked_file: Option<PathBuf>, 
+    save_dialog: FileDialog
 }
 
 impl CharacterApp {
@@ -22,7 +23,7 @@ impl CharacterApp {
         let mutations = Mutations::from_json("src/base_data/classes.json").unwrap_or_default();
         let selected_mutation_trait = String::new();
         if mutations.options.is_empty() {println!("options is empty")}
-        Self { character, mutations, selected_mutation_trait, file_dialog: FileDialog::new(), picked_file: None}
+        Self { character, mutations, selected_mutation_trait, file_dialog: FileDialog::new(), picked_file: None, save_dialog: FileDialog::new()}
     }
 }
 
@@ -32,6 +33,10 @@ impl eframe::App for CharacterApp{
             if ui.button("Pick file").clicked() {
                 // Open the file dialog to pick a file.
                 self.file_dialog.pick_file();
+            }
+
+            if ui.button("Save").clicked() {
+                self.save_dialog.save_file();
             }
 
             ui.label(format!("Picked file: {:?}", self.picked_file));
@@ -45,6 +50,14 @@ impl eframe::App for CharacterApp{
                 let character_path_str = path.to_string_lossy().to_string();
                 self.character = Character::from_json(&character_path_str).unwrap_or_default();
             }
+
+            
+
+            if let Some(path) = self.save_dialog.update(ctx).picked() {
+                let saving_path_str = path.to_string_lossy().to_string();
+                if let Err(err) = self.character.to_json(&saving_path_str) {
+                    eprintln!("Failed to save character: {}", err);
+                }};
         });
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Mutagen Character Sheet");
