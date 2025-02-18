@@ -60,5 +60,5 @@ impl eframe::App for CharacterApp{
 }
 fn main() -> eframe::Result<()> {
     let options = eframe::NativeOptions::default();
-    eframe::run_native("Mutagen Character Creature", options, Box::new(|_cc: &CreationContext| Box::new(CharacterApp::default())))
+    eframe::run_native("Mutagen Character Creature", options, Box::new(|_cc: &CreationContext| Ok(Box::new(CharacterApp::default()))))
 }
