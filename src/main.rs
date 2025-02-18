@@ -11,7 +11,6 @@ use mutation::Mutations;
 struct CharacterApp {
     character: Character,
     mutations: Mutations,
-    selected_mutation_trait: String,
     file_dialog: FileDialog,
     picked_file: Option<PathBuf>, 
     save_dialog: FileDialog
@@ -21,9 +20,8 @@ impl CharacterApp {
     fn new(_cc: &eframe::CreationContext) -> Self {
         let character = Character::from_json("character.json").unwrap_or_default();
         let mutations = Mutations::from_json("src/base_data/classes.json").unwrap_or_default();
-        let selected_mutation_trait = String::new();
         if mutations.options.is_empty() {println!("options is empty")}
-        Self { character, mutations, selected_mutation_trait, file_dialog: FileDialog::new(), picked_file: None, save_dialog: FileDialog::new()}
+        Self { character, mutations, file_dialog: FileDialog::new(), picked_file: None, save_dialog: FileDialog::new()}
     }
 }
 
@@ -55,6 +53,7 @@ impl eframe::App for CharacterApp{
 
             if let Some(path) = self.save_dialog.update(ctx).picked() {
                 let saving_path_str = path.to_string_lossy().to_string();
+                println!("Mutation data before saving {:?}", self.character.mutation);
                 if let Err(err) = self.character.to_json(&saving_path_str) {
                     eprintln!("Failed to save character: {}", err);
                 }};
@@ -64,16 +63,16 @@ impl eframe::App for CharacterApp{
             ui.label("Name:");
             ui.text_edit_singleline(&mut self.character.name);
             egui::ComboBox::from_label("Mutation")
-                .selected_text(&self.character.mutation)
+                .selected_text(&self.character.mutation.name)
                 .show_ui(ui, |ui|{
                     for mutation in &self.mutations.options {
-                        if ui.selectable_value(&mut self.character.mutation, mutation.name.clone(), &mutation.name).clicked() {
-                            self.selected_mutation_trait = mutation.main_trait.clone();
+                        if ui.selectable_value(&mut self.character.mutation, mutation.clone(), &mutation.name).clicked() {
+                            
                         }
                     }
-                });
+                }); 
             ui.label("main trait:");
-            ui.add(Label::new(&self.selected_mutation_trait));
+            ui.add(Label::new(&self.character.mutation.main_trait));
             ui.label("Threat Level:");
             ui.add(egui::Slider::new(&mut self.character.threat, 1..=20));
             ui.label("Strength:");

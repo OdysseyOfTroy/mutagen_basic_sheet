@@ -1,7 +1,7 @@
 use std::fs::{self};
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct Mutation {
     pub name: String,
     pub main_trait: String,

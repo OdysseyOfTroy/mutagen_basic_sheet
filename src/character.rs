@@ -2,11 +2,13 @@ use std::{fs::{self, File}, io::Write};
 
 use serde::{Deserialize, Serialize};
 
+use crate::mutation::Mutation;
 
-#[derive(Serialize, Deserialize, Default)]
+
+#[derive(Serialize, Deserialize)]
 pub struct Character {
     pub name: String,
-    pub mutation: String,
+    pub mutation: Mutation,
     pub threat: u8,
     pub strength: u8,
     pub discipline: u8,
@@ -14,6 +16,22 @@ pub struct Character {
     pub intelligence: u8,
     pub sense: u8,
     pub will: u8,
+}
+
+impl Default for Character {
+    fn default() -> Self {
+        Character { 
+            name: "".to_string(), 
+            mutation: Mutation { name:"".to_string(), main_trait: "".to_string() },
+            threat: 1, 
+            strength: 20, 
+            discipline: 20, 
+            constitution: 20, 
+            intelligence: 20, 
+            sense: 20, 
+            will: 20,
+         }
+    }
 }
 
 impl Character {
