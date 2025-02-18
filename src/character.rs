@@ -1,4 +1,4 @@
-use std::fs;
+use std::{fs::{self, File}, io::Write};
 
 use serde::{Deserialize, Serialize};
 
@@ -22,5 +22,12 @@ impl Character {
             Ok(file_content) => serde_json::from_str(&file_content),
             Err(_) => Ok(Self::default()),
         }
+    }
+
+    pub fn to_json(&self, file_path: &str) -> Result<(), std::io::Error>{
+        let json = serde_json::to_string_pretty(self).expect("Failed to Serialise character");
+        let mut file = File::create(file_path)?;
+        file.write_all(json.as_bytes())?;
+        Ok(())
     }
 }
