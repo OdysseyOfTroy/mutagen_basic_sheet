@@ -42,6 +42,8 @@ impl eframe::App for CharacterApp{
             // Check if the user picked a file.
             if let Some(path) = self.file_dialog.take_picked() {
                 self.picked_file = Some(path.to_path_buf());
+                let character_path_str = path.to_string_lossy().to_string();
+                self.character = Character::from_json(&character_path_str).unwrap_or_default();
             }
         });
         egui::CentralPanel::default().show(ctx, |ui| {
