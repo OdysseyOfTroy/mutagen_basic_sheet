@@ -1,0 +1,11 @@
+{
+    "name": "Eve",
+    "mutation": "Nova",
+    "threat": 1,
+    "strength": 30,
+    "discipline": 30,
+    "constitution": 30,
+    "intelligence": 30,
+    "sense": 30,
+    "will": 30
+}
