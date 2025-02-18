@@ -1,12 +1,11 @@
 mod character;
 mod mutation;
 
-
-use std::{fs::File, path::PathBuf};
+use std::path::PathBuf;
 
 use character::Character;
-use eframe::egui::{self, menu, Label};
-use egui_file_dialog::{DialogMode, FileDialog};
+use eframe::egui::{self, Label};
+use egui_file_dialog::FileDialog;
 use mutation::Mutations;
 
 struct CharacterApp {
