@@ -81,8 +81,10 @@ impl eframe::App for CharacterApp{
         });
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Mutagen Character Sheet");
+            egui::Grid::new("traits_grid").show(ui, |ui| {
             ui.label("Name:");
             ui.text_edit_singleline(&mut self.character.name);
+            ui.end_row();
             egui::ComboBox::from_label("Mutation")
                 .selected_text(&self.character.mutation.name)
                 .show_ui(ui, |ui|{
@@ -92,48 +94,56 @@ impl eframe::App for CharacterApp{
                         }
                     }
                 }); 
+                ui.end_row();
             ui.label("main trait:");
             ui.add(Label::new(&self.character.mutation.main_trait));
+            ui.end_row();
             ui.label("Threat Level:");
             ui.add(egui::Slider::new(&mut self.character.threat, 1..=10));
+            ui.end_row();
             ui.label("Strength:");
             if ui.add(egui::Slider::new(&mut self.character.strength, 1..=100)).changed() {
                 let mut new_str_mod = ((self.character.strength as i8 / 10 as i8) - 2 as i8).to_string();
                 change_trait_mod(&mut self.str_mod_text, &mut new_str_mod, ctx);
             };
+            ui.add(egui::Label::new(&self.str_mod_text));
+            ui.end_row();
             ui.label("Discipline:");
             if ui.add(egui::Slider::new(&mut self.character.discipline, 1..=100)).changed() {
                 let mut new_dsc_mod = ((self.character.discipline as i8 / 10 as i8) - 2 as i8).to_string();
                 change_trait_mod(&mut self.dsc_mod_text, &mut new_dsc_mod, ctx);
             };
+            ui.add(egui::Label::new(&self.dsc_mod_text));
+            ui.end_row();
             ui.label("Constitution:");
             if ui.add(egui::Slider::new(&mut self.character.constitution, 1..=100)).changed() {
                 let mut new_con_mod = ((self.character.constitution as i8 / 10 as i8) - 2 as i8).to_string();
                 change_trait_mod(&mut self.con_mod_text, &mut new_con_mod, ctx);
             };
+            ui.add(egui::Label::new(&self.con_mod_text));
+            ui.end_row();
             ui.label("Intelligence:");
             if ui.add(egui::Slider::new(&mut self.character.intelligence, 1..=100)).changed() {
                 let mut new_int_mod = ((self.character.intelligence as i8 / 10 as i8) - 2 as i8).to_string();
                 change_trait_mod(&mut self.int_mod_text, &mut new_int_mod, ctx);
             };
+            ui.add(egui::Label::new(&self.int_mod_text));
+            ui.end_row();
             ui.label("Sense:");
             if ui.add(egui::Slider::new(&mut self.character.sense, 1..=100)).changed() {
                 let mut new_sns_mod = ((self.character.sense as i8 / 10 as i8) - 2 as i8).to_string();
                 change_trait_mod(&mut self.sns_mod_text, &mut new_sns_mod, ctx);
             };
+            ui.add(egui::Label::new(&self.sns_mod_text));
+            ui.end_row();
             ui.label("Will:");
             if ui.add(egui::Slider::new(&mut self.character.will, 1..=100)).changed() {
                 let mut new_wil_mod = ((self.character.will as i8 / 10 as i8) - 2 as i8).to_string();
                 change_trait_mod(&mut self.wil_mod_text, &mut new_wil_mod, ctx);
             };
-
-            ui.add(egui::Label::new(&self.str_mod_text));
-            ui.add(egui::Label::new(&self.dsc_mod_text));
-            ui.add(egui::Label::new(&self.con_mod_text));
-            ui.add(egui::Label::new(&self.int_mod_text));
-            ui.add(egui::Label::new(&self.sns_mod_text));
             ui.add(egui::Label::new(&self.wil_mod_text));
-
+            ui.end_row();
+        });
 
             
             fn change_trait_mod(trait_mod_text: &mut String, new_trait_mod: &mut String, ctx: &egui::Context) {
