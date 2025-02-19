@@ -83,7 +83,6 @@ impl Character {
     }
 
     pub fn get_trait_value(character: &Character, selected_trait: &Traits) -> u8 {
-        println!("Trait: {}", selected_trait.to_string());
         match selected_trait.to_string().as_str() {
             "Strength" => character.strength,
             "Discipline" => character.discipline,
