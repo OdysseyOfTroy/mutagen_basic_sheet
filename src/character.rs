@@ -2,7 +2,7 @@ use std::{fs::{self, File}, io::Write};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{mutation::Mutation, skills::Skill, weapon_proficiencies::WeaponProficiency};
+use crate::{enums::traits::Traits, mutation::Mutation, skills::Skill, weapon_proficiencies::WeaponProficiency};
 
 #[derive(Serialize, Deserialize)]
 pub struct Character {
@@ -78,6 +78,19 @@ impl Character {
             "intelligence" => character.intelligence,
             "sense" => character.sense,
             "will" => character.will,
+            _ => 0, // Default value if trait is not found
+        }
+    }
+
+    pub fn get_trait_value(character: &Character, selected_trait: &Traits) -> u8 {
+        println!("Trait: {}", selected_trait.to_string());
+        match selected_trait.to_string().as_str() {
+            "Strength" => character.strength,
+            "Discipline" => character.discipline,
+            "Constitution" => character.constitution,
+            "Intelligence" => character.intelligence,
+            "Sense" => character.sense,
+            "Will" => character.will,
             _ => 0, // Default value if trait is not found
         }
     }
