@@ -6,7 +6,7 @@ use crate::enums::Proficiency;
 #[derive(Serialize,Deserialize, Clone)]
 pub struct WeaponProficiency {
     pub name: String,
-    proficiency_level: Proficiency,
+    pub proficiency_level: Proficiency,
 }
 
 #[derive(Serialize,Deserialize)]
@@ -21,10 +21,20 @@ impl Default for WeaponProficiencies {
 }
 
 impl WeaponProficiencies {
-    pub fn from_json(file_path: &str) -> Result<Self, serde_json::Error> {
+    pub fn from_json(file_path: &str) -> Self {
+
         match fs::read_to_string(file_path) {
-            Ok(file_content) => {serde_json::from_str(&file_content)}
-            Err(e) => { println!("Error parsing JSON: {}", e); Ok(Self::default())
+            Ok(file_content) => {
+                match serde_json::from_str(&file_content) {
+                    Ok(parsed) => parsed,
+                    Err(e) => {
+                        eprintln!("Error Deserialsing JSON: {}", e);
+                        Self::default()
+                    }
+                }
+            }
+            Err(e) => { eprintln!("Error reading file {}: {}", file_path, e);
+            Self::default()
         },
         }
     }
