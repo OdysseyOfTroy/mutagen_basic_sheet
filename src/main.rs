@@ -1,7 +1,8 @@
 mod character;
 mod mutation;
 mod skills;
-mod enums;
+pub mod enums;
+
 mod weapon_proficiencies;
 
 use std::path::PathBuf;
@@ -231,10 +232,10 @@ impl eframe::App for CharacterApp{
         
                     for skill in &mut self.character.skills {
                         ui.label(&skill.name);
-                        ui.radio_value(&mut skill.proficiency_level, enums::Proficiency::Untrained, "Untrained");
-                        ui.radio_value(&mut skill.proficiency_level, enums::Proficiency::Proficient, "Proficient");
-                        ui.radio_value(&mut skill.proficiency_level, enums::Proficiency::Expert, "Expert");
-                        ui.radio_value(&mut skill.proficiency_level, enums::Proficiency::Master, "Master");
+                        ui.radio_value(&mut skill.proficiency_level, enums::proficiencies::Proficiency::Untrained, "Untrained");
+                        ui.radio_value(&mut skill.proficiency_level, enums::proficiencies::Proficiency::Proficient, "Proficient");
+                        ui.radio_value(&mut skill.proficiency_level, enums::proficiencies::Proficiency::Expert, "Expert");
+                        ui.radio_value(&mut skill.proficiency_level, enums::proficiencies::Proficiency::Master, "Master");
                         ui.end_row();
                     }
                     
@@ -249,10 +250,10 @@ impl eframe::App for CharacterApp{
         
                     for wep_prof in &mut self.character.weapon_proficiencies {
                         ui.label(&wep_prof.name);
-                        ui.radio_value(&mut wep_prof.proficiency_level, enums::Proficiency::Untrained, "Untrained");
-                        ui.radio_value(&mut wep_prof.proficiency_level, enums::Proficiency::Proficient, "Proficient");
-                        ui.radio_value(&mut wep_prof.proficiency_level, enums::Proficiency::Expert, "Expert");
-                        ui.radio_value(&mut wep_prof.proficiency_level, enums::Proficiency::Master, "Master");
+                        ui.radio_value(&mut wep_prof.proficiency_level, enums::proficiencies::Proficiency::Untrained, "Untrained");
+                        ui.radio_value(&mut wep_prof.proficiency_level, enums::proficiencies::Proficiency::Proficient, "Proficient");
+                        ui.radio_value(&mut wep_prof.proficiency_level, enums::proficiencies::Proficiency::Expert, "Expert");
+                        ui.radio_value(&mut wep_prof.proficiency_level, enums::proficiencies::Proficiency::Master, "Master");
                         ui.end_row();
                     }
                     
