@@ -8,9 +8,9 @@ mod weapon_proficiencies;
 use std::path::PathBuf;
 
 use character::Character;
-use eframe::egui::{self, Label};
+use eframe::egui::{self, Label, RichText};
 use egui_file_dialog::FileDialog;
-use enums::traits::Traits;
+use enums::{proficiencies::Proficiency, traits::Traits};
 use mutation::Mutations;
 
 struct CharacterApp {
@@ -26,8 +26,11 @@ struct CharacterApp {
     ability_strike_text: String,
     precision_strike_text: String,
     selected_trait: Traits,
+    selected_proficiency: Proficiency,
     selected_trait_value: u8,
     selected_trait_value_text: String,
+    calculated_sam_value: u8,
+    calculated_sam_value_text: String,
     mutations: Mutations,
     file_dialog: FileDialog,
     picked_file: Option<PathBuf>, 
@@ -40,8 +43,11 @@ impl CharacterApp {
         let character = Character::from_json("character.json");
         let mutations = Mutations::from_json("src/base_data/classes.json").unwrap_or_default();
         let selected_trait = Traits::Strength;
+        let selected_proficiency = Proficiency::Untrained;
         let selected_trait_value = 0;
         let selected_trait_value_text = character.strength.to_string();
+        let calculated_sam_value = selected_trait_value;
+        let calculated_sam_value_text = calculated_sam_value.to_string();
 
         let range_strike = character.sense;
         let melee_strike = character.strength;
@@ -61,12 +67,18 @@ impl CharacterApp {
         let wil_mod_text = Character::calculate_mod(character.will);
 
         Self { character, mutations, file_dialog: FileDialog::new(), picked_file: None, save_dialog: FileDialog::new(),
-            str_mod_text, dsc_mod_text, con_mod_text, int_mod_text, sns_mod_text, wil_mod_text, range_strike_text, melee_strike_text, ability_strike_text, precision_strike_text, selected_trait, selected_trait_value, selected_trait_value_text }
+            str_mod_text, dsc_mod_text, con_mod_text, int_mod_text, sns_mod_text, wil_mod_text, 
+            range_strike_text, melee_strike_text, ability_strike_text, precision_strike_text, 
+            selected_trait,selected_trait_value, selected_trait_value_text, 
+            selected_proficiency, 
+            calculated_sam_value, calculated_sam_value_text,
+        }
     }
 }
 
 impl eframe::App for CharacterApp{
     fn update(&mut self, ctx: &egui::Context , _frame: &mut eframe::Frame) {
+        
         egui::TopBottomPanel::top("menu").show(ctx, |ui| {
             if ui.button("Pick file").clicked() {
                 // Open the file dialog to pick a file.
@@ -111,13 +123,28 @@ impl eframe::App for CharacterApp{
                 .show_ui(ui, |ui|{
                     for main_trait in Traits::iterator() {
                         if ui.selectable_value(&mut self.selected_trait, main_trait.clone(), &main_trait.to_string()).clicked() {
+                            //change selected trait value
                             let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
-                            println!("{}", new_selected_trait_value); 
+                            self.selected_trait_value = new_selected_trait_value;
+                            self.calculated_sam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
                         }
                     }
                 });
             ui.label(&self.selected_trait_value_text);
+            for prof_level in Proficiency::iterator() {
+                if ui.add(egui::RadioButton::new(self.selected_proficiency == prof_level.clone(), &prof_level.to_string())).clicked()
+                {
+                    self.selected_proficiency = prof_level;
+                    self.calculated_sam_value = self.selected_trait_value + self.selected_proficiency.value();
+                            change_label(&mut self.calculated_sam_value_text, &mut self.calculated_sam_value.to_string(), ctx);
+                };
+                    
+            };
+
+
+            ui.label(RichText::new(&self.calculated_sam_value_text).size(30.0));
+
         });
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Mutagen Character Sheet");
@@ -147,14 +174,19 @@ impl eframe::App for CharacterApp{
                     ui.label("Strength:");
                     if ui.add(egui::Slider::new(&mut self.character.strength, 1..=100)).changed() {
                         let mut new_str_mod = ((self.character.strength as i8 / 10 as i8) - 2 as i8).to_string();
-
+                        //change ability strike label
                         if determine_matching_trait(&mut self.character.mutation.main_trait, &mut "strength".to_string()) {
                             let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
                             change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
                         }
+                        //change selected trait value label
                         if determine_matching_trait(&mut self.selected_trait.to_string(), &mut "Strength".to_string()) {
                             let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
+                            self.selected_trait_value = new_selected_trait_value;                    
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
+
+                            self.calculated_sam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            change_label(&mut self.calculated_sam_value_text, &mut self.calculated_sam_value.to_string(), ctx);
                         }
 
                         //change str mod label
@@ -169,15 +201,19 @@ impl eframe::App for CharacterApp{
                     if ui.add(egui::Slider::new(&mut self.character.discipline, 1..=100)).changed() {
                         let mut new_dsc_mod = ((self.character.discipline as i8 / 10 as i8) - 2 as i8).to_string();
                         change_label(&mut self.dsc_mod_text, &mut new_dsc_mod, ctx);
-
+                        //change ability strike label
                         if determine_matching_trait(&mut self.character.mutation.main_trait, &mut "discipline".to_string()) {
                             let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
                             change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
                         }
-
+                        //change selected trait value label
                         if determine_matching_trait(&mut self.selected_trait.to_string(), &mut "Discipline".to_string()) {
                             let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
+                            self.selected_trait_value = new_selected_trait_value;
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
+
+                            self.calculated_sam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            change_label(&mut self.calculated_sam_value_text, &mut self.calculated_sam_value.to_string(), ctx);
                         }
 
                         change_label(&mut self.precision_strike_text, &mut self.character.discipline.to_string(), ctx);
@@ -188,17 +224,20 @@ impl eframe::App for CharacterApp{
                     if ui.add(egui::Slider::new(&mut self.character.constitution, 1..=100)).changed() {
                         let mut new_con_mod = ((self.character.constitution as i8 / 10 as i8) - 2 as i8).to_string();
                         change_label(&mut self.con_mod_text, &mut new_con_mod, ctx);
-
+                        //change ability strike label
                         if determine_matching_trait(&mut self.character.mutation.main_trait, &mut "constitution".to_string()) {
                             let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
                             change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
                         }
-                        
+                        //change selected trait value label
                         if determine_matching_trait(&mut self.selected_trait.to_string(), &mut "Constitution".to_string()) {
                             let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
+                            self.selected_trait_value = new_selected_trait_value;
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
-                        
-                    }};
+
+                            self.calculated_sam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            change_label(&mut self.calculated_sam_value_text, &mut self.calculated_sam_value.to_string(), ctx);
+                        }};
                     ui.add(egui::Label::new(&self.con_mod_text));
                     ui.end_row();
                     ui.label("Intelligence:");
@@ -216,16 +255,20 @@ impl eframe::App for CharacterApp{
                     ui.label("Sense:");
                     if ui.add(egui::Slider::new(&mut self.character.sense, 1..=100)).changed() {
                         let mut new_sns_mod = ((self.character.sense as i8 / 10 as i8) - 2 as i8).to_string();
-
+                        //change ability strike label
                         if determine_matching_trait(&mut self.character.mutation.main_trait, &mut "sense".to_string()) {
                             let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
                             change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
                         }
 
-
+                        //change selected trait value label
                         if determine_matching_trait(&mut self.selected_trait.to_string(), &mut "Sense".to_string()) {
                             let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
+                            self.selected_trait_value = new_selected_trait_value;
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
+
+                            self.calculated_sam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            change_label(&mut self.calculated_sam_value_text, &mut self.calculated_sam_value.to_string(), ctx);
                         }
                         //change sns mod label
                         change_label(&mut self.sns_mod_text, &mut new_sns_mod, ctx);
@@ -238,15 +281,19 @@ impl eframe::App for CharacterApp{
                     if ui.add(egui::Slider::new(&mut self.character.will, 1..=100)).changed() {
                         let mut new_wil_mod = ((self.character.will as i8 / 10 as i8) - 2 as i8).to_string();
                         change_label(&mut self.wil_mod_text, &mut new_wil_mod, ctx);
-
+                        //change ability strike label
                         if determine_matching_trait(&mut self.character.mutation.main_trait, &mut "will".to_string()) {
                             let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
                             change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
                         }
-
+                        //change selected trait value label
                         if determine_matching_trait(&mut self.selected_trait.to_string(), &mut "Will".to_string()) {
                             let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
+                            self.selected_trait_value = new_selected_trait_value;
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
+
+                            self.calculated_sam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            change_label(&mut self.calculated_sam_value_text, &mut self.calculated_sam_value.to_string(), ctx);
                         }
                     };
                     ui.add(egui::Label::new(&self.wil_mod_text));
