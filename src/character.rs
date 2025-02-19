@@ -2,8 +2,7 @@ use std::{fs::{self, File}, io::Write};
 
 use serde::{Deserialize, Serialize};
 
-use crate::mutation::Mutation;
-
+use crate::{mutation::Mutation, skills::Skills};
 
 #[derive(Serialize, Deserialize)]
 pub struct Character {
@@ -16,6 +15,7 @@ pub struct Character {
     pub intelligence: u8,
     pub sense: u8,
     pub will: u8,
+    pub skills: Skills
 }
 
 impl Default for Character {
@@ -30,6 +30,7 @@ impl Default for Character {
             intelligence: 20, 
             sense: 20, 
             will: 20,
+            skills: Skills::default()
          }
     }
 }
