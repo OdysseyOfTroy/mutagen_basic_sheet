@@ -103,7 +103,7 @@ impl eframe::App for CharacterApp{
                         .selected_text(&self.character.mutation.name)
                         .show_ui(ui, |ui|{
                             for mutation in &self.mutations.options {
-                                if ui.selectable_value(&mut self.character.mutation, mutation.clone(), &mutation.name).changed() {
+                                if ui.selectable_value(&mut self.character.mutation, mutation.clone(), &mutation.name).clicked() {
                                     let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
                                     change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
                                 }
@@ -116,9 +116,15 @@ impl eframe::App for CharacterApp{
                     ui.label("Threat Level:");
                     ui.add(egui::Slider::new(&mut self.character.threat, 1..=10));
                     ui.end_row();
+                    //Trait Section
                     ui.label("Strength:");
                     if ui.add(egui::Slider::new(&mut self.character.strength, 1..=100)).changed() {
                         let mut new_str_mod = ((self.character.strength as i8 / 10 as i8) - 2 as i8).to_string();
+
+                        if determine_ability_strike(&mut self.character.mutation.main_trait, &mut "strength".to_string()) {
+                            let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
+                            change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
+                        }
 
                         //change str mod label
                         change_label(&mut self.str_mod_text, &mut new_str_mod, ctx);
@@ -132,6 +138,11 @@ impl eframe::App for CharacterApp{
                     if ui.add(egui::Slider::new(&mut self.character.discipline, 1..=100)).changed() {
                         let mut new_dsc_mod = ((self.character.discipline as i8 / 10 as i8) - 2 as i8).to_string();
                         change_label(&mut self.dsc_mod_text, &mut new_dsc_mod, ctx);
+
+                        if determine_ability_strike(&mut self.character.mutation.main_trait, &mut "discipline".to_string()) {
+                            let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
+                            change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
+                        }
                     };
                     ui.add(egui::Label::new(&self.dsc_mod_text));
                     ui.end_row();
@@ -139,6 +150,11 @@ impl eframe::App for CharacterApp{
                     if ui.add(egui::Slider::new(&mut self.character.constitution, 1..=100)).changed() {
                         let mut new_con_mod = ((self.character.constitution as i8 / 10 as i8) - 2 as i8).to_string();
                         change_label(&mut self.con_mod_text, &mut new_con_mod, ctx);
+
+                        if determine_ability_strike(&mut self.character.mutation.main_trait, &mut "constitution".to_string()) {
+                            let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
+                            change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
+                        }
                     };
                     ui.add(egui::Label::new(&self.con_mod_text));
                     ui.end_row();
@@ -146,12 +162,22 @@ impl eframe::App for CharacterApp{
                     if ui.add(egui::Slider::new(&mut self.character.intelligence, 1..=100)).changed() {
                         let mut new_int_mod = ((self.character.intelligence as i8 / 10 as i8) - 2 as i8).to_string();
                         change_label(&mut self.int_mod_text, &mut new_int_mod, ctx);
+
+                        if determine_ability_strike(&mut self.character.mutation.main_trait, &mut "intelligence".to_string()) {
+                            let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
+                            change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
+                        }
                     };
                     ui.add(egui::Label::new(&self.int_mod_text));
                     ui.end_row();
                     ui.label("Sense:");
                     if ui.add(egui::Slider::new(&mut self.character.sense, 1..=100)).changed() {
                         let mut new_sns_mod = ((self.character.sense as i8 / 10 as i8) - 2 as i8).to_string();
+
+                        if determine_ability_strike(&mut self.character.mutation.main_trait, &mut "sense".to_string()) {
+                            let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
+                            change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
+                        }
                         
                         //change sns mod label
                         change_label(&mut self.sns_mod_text, &mut new_sns_mod, ctx);
@@ -164,6 +190,11 @@ impl eframe::App for CharacterApp{
                     if ui.add(egui::Slider::new(&mut self.character.will, 1..=100)).changed() {
                         let mut new_wil_mod = ((self.character.will as i8 / 10 as i8) - 2 as i8).to_string();
                         change_label(&mut self.wil_mod_text, &mut new_wil_mod, ctx);
+
+                        if determine_ability_strike(&mut self.character.mutation.main_trait, &mut "will".to_string()) {
+                            let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
+                            change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
+                        }
                     };
                     ui.add(egui::Label::new(&self.wil_mod_text));
                     ui.end_row();
@@ -171,6 +202,7 @@ impl eframe::App for CharacterApp{
                     ui.separator();
                     ui.end_row();
 
+                    //Strike Section
                     ui.label("Strikes");
                     ui.end_row();
                     ui.label("Melee Strike");
@@ -183,6 +215,7 @@ impl eframe::App for CharacterApp{
                     ui.label(&self.ability_strike_text);
                     ui.end_row();
 
+                    //Skills Section
                     ui.label("Skills");
                     ui.end_row();
                     ui.separator();
@@ -197,9 +230,10 @@ impl eframe::App for CharacterApp{
                         ui.end_row();
                     }
                     
-                    
                     ui.separator();
                     ui.end_row();
+
+                    //Weapon Proficiency Section
                     ui.label("Weapons");
                     ui.end_row();
                     ui.separator();
@@ -222,6 +256,14 @@ impl eframe::App for CharacterApp{
                 label_text.clear();
                 label_text.push_str(new_label_text);
                 ctx.request_repaint();
+            }
+
+            fn determine_ability_strike(main_trait: &mut String, this_trait: &mut String) -> bool {
+                if main_trait == this_trait {
+                    true
+                } else {
+                    false
+                }
             }
         });}
     }
