@@ -71,7 +71,6 @@ impl Character {
 
 
     pub fn calculate_ability_strike_trait(character: &Character) -> u8 {
-        println!("calculate ability strike trait {}", character.mutation.main_trait);
         match character.mutation.main_trait.to_lowercase().as_str() {
             "strength" => character.strength,
             "discipline" => character.discipline,
