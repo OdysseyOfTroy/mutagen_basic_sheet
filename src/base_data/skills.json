@@ -1,5 +1,4 @@
-{
-    "skills": [
+[
         {"name": "Academia", "proficiency_level": "untrained"},
         {"name": "Athletics", "proficiency_level": "untrained"},
         {"name": "Deception", "proficiency_level": "untrained"},
@@ -19,4 +18,3 @@
         {"name": "Survival", "proficiency_level": "untrained"},
         {"name": "Tech", "proficiency_level": "untrained"}
     ]
-}

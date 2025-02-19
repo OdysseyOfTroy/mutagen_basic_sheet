@@ -1,5 +1,4 @@
-{
-    "weapon_proficiencies": [
+[
         {"name": "Blade", "proficiency_level": "untrained"},
         {"name": "Hammer", "proficiency_level": "untrained"},
         {"name": "Pistol", "proficiency_level": "untrained"},
@@ -13,5 +12,4 @@
         {"name": "Arc", "proficiency_level": "untrained"},
         {"name": "Gatling", "proficiency_level": "untrained"},
         {"name": "Whip", "proficiency_level": "untrained"}
-    ]
-}
+]

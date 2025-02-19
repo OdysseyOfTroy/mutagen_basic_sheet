@@ -9,19 +9,8 @@ pub struct WeaponProficiency {
     pub proficiency_level: Proficiency,
 }
 
-#[derive(Serialize,Deserialize)]
-pub struct WeaponProficiencies {
-    pub weapon_proficiencies: Vec<WeaponProficiency>
-}
-
-impl Default for WeaponProficiencies {
-    fn default() -> Self {
-        WeaponProficiencies { weapon_proficiencies: [].to_vec() }
-    }
-}
-
-impl WeaponProficiencies {
-    pub fn from_json(file_path: &str) -> Self {
+impl WeaponProficiency{
+    pub fn from_json(file_path: &str) -> Vec<WeaponProficiency> {
 
         match fs::read_to_string(file_path) {
             Ok(file_content) => {
@@ -29,12 +18,12 @@ impl WeaponProficiencies {
                     Ok(parsed) => parsed,
                     Err(e) => {
                         eprintln!("Error Deserialsing JSON: {}", e);
-                        Self::default()
+                        Vec::new()
                     }
                 }
             }
             Err(e) => { eprintln!("Error reading file {}: {}", file_path, e);
-            Self::default()
+            Vec::new()
         },
         }
     }

@@ -2,7 +2,7 @@ use std::{fs::{self, File}, io::Write};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{mutation::Mutation, skills::{Skill, Skills}, weapon_proficiencies::{WeaponProficiencies, WeaponProficiency}};
+use crate::{mutation::Mutation, skills::Skill, weapon_proficiencies::WeaponProficiency};
 
 #[derive(Serialize, Deserialize)]
 pub struct Character {
@@ -31,8 +31,8 @@ impl Default for Character {
             intelligence: 20, 
             sense: 20, 
             will: 20,
-            skills: Vec::new(),
-            weapon_proficiencies: Vec::new(),
+            skills: Skill::from_json("src/base_data/skills.json") ,
+            weapon_proficiencies: WeaponProficiency::from_json("src/base_data/weapon_proficiencies.json"),
          }
     }
 }

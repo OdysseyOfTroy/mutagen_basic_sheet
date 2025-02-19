@@ -10,8 +10,6 @@ use character::Character;
 use eframe::egui::{self, Label};
 use egui_file_dialog::FileDialog;
 use mutation::Mutations;
-use skills::Skills;
-use weapon_proficiencies::WeaponProficiencies;
 
 struct CharacterApp {
     character: Character,
@@ -22,8 +20,6 @@ struct CharacterApp {
     sns_mod_text: String,
     wil_mod_text: String,
     mutations: Mutations,
-    skills: Skills,
-    weapon_proficiencies: WeaponProficiencies,
     file_dialog: FileDialog,
     picked_file: Option<PathBuf>, 
     save_dialog: FileDialog
@@ -34,8 +30,6 @@ impl CharacterApp {
     fn new(_cc: &eframe::CreationContext) -> Self {
         let character = Character::from_json("character.json");
         let mutations = Mutations::from_json("src/base_data/classes.json").unwrap_or_default();
-        let skills: Skills  = Skills::from_json("src/base_data/skills.json");
-        let weapon_proficiencies: WeaponProficiencies = WeaponProficiencies::from_json("src/base_data/weapon_proficiencies.json");
 
         let str_mod_text = Character::calculate_mod(character.strength);
         let dsc_mod_text = Character::calculate_mod(character.discipline);
@@ -44,7 +38,7 @@ impl CharacterApp {
         let sns_mod_text = Character::calculate_mod(character.sense);
         let wil_mod_text = Character::calculate_mod(character.will);
 
-        Self { character, mutations, skills, weapon_proficiencies, file_dialog: FileDialog::new(), picked_file: None, save_dialog: FileDialog::new(),
+        Self { character, mutations, file_dialog: FileDialog::new(), picked_file: None, save_dialog: FileDialog::new(),
             str_mod_text, dsc_mod_text, con_mod_text, int_mod_text, sns_mod_text, wil_mod_text }
     }
 }
@@ -153,13 +147,13 @@ impl eframe::App for CharacterApp{
             ui.add(egui::Label::new(&self.wil_mod_text));
             ui.end_row();
 
-            for skill in &mut self.skills.skills {
+            for skill in &mut self.character.skills {
                 ui.label(&skill.name);
                 ui.label(&skill.proficiency_level.to_string());
             }
             ui.end_row();
 
-            for wep_prof in &mut self.weapon_proficiencies.weapon_proficiencies {
+            for wep_prof in &mut self.character.weapon_proficiencies {
                 ui.label(&wep_prof.name);
                 ui.label(wep_prof.proficiency_level.to_string()); 
             }
