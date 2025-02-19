@@ -1,0 +1,20 @@
+[
+        {"name": "Academia", "proficiency_level": "untrained"},
+        {"name": "Athletics", "proficiency_level": "untrained"},
+        {"name": "Deception", "proficiency_level": "untrained"},
+        {"name": "Endurance", "proficiency_level": "untrained"},
+        {"name": "Force", "proficiency_level": "untrained"},
+        {"name": "Insight", "proficiency_level": "untrained"},
+        {"name": "Intimidation", "proficiency_level": "untrained"},
+        {"name": "Piloting", "proficiency_level": "untrained"},
+        {"name": "Investigation", "proficiency_level": "untrained"},
+        {"name": "Medicine", "proficiency_level": "untrained"},
+        {"name": "Perception", "proficiency_level": "untrained"},
+        {"name": "Persuasion", "proficiency_level": "untrained"},
+        {"name": "Precision", "proficiency_level": "untrained"},
+        {"name": "Resistance", "proficiency_level": "untrained"},
+        {"name": "Science", "proficiency_level": "untrained"},
+        {"name": "Stealth", "proficiency_level": "untrained"},
+        {"name": "Survival", "proficiency_level": "untrained"},
+        {"name": "Tech", "proficiency_level": "untrained"}
+    ]
