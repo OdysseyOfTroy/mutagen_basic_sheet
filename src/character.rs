@@ -2,7 +2,7 @@ use std::{fs::{self, File}, io::Write};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{mutation::Mutation, skills::Skills};
+use crate::{mutation::Mutation, skills::{Skill, Skills}, weapon_proficiencies::{WeaponProficiencies, WeaponProficiency}};
 
 #[derive(Serialize, Deserialize)]
 pub struct Character {
@@ -15,7 +15,8 @@ pub struct Character {
     pub intelligence: u8,
     pub sense: u8,
     pub will: u8,
-    pub skills: Skills
+    pub skills: Vec<Skill>,
+    pub weapon_proficiencies: Vec<WeaponProficiency>
 }
 
 impl Default for Character {
@@ -30,18 +31,31 @@ impl Default for Character {
             intelligence: 20, 
             sense: 20, 
             will: 20,
-            skills: Skills::default()
+            skills: Vec::new(),
+            weapon_proficiencies: Vec::new(),
          }
     }
 }
 
 impl Character {
-    pub fn from_json(file_path: &str) -> Result<Self, serde_json::Error> {
+    pub fn from_json(file_path: &str) -> Self{
+
         match fs::read_to_string(file_path) {
-            Ok(file_content) => serde_json::from_str(&file_content),
-            Err(_) => Ok(Self::default()),
+            Ok(file_content) => { 
+                match serde_json::from_str(&file_content){
+                    Ok(parsed) => parsed,
+                    Err(e) => {
+                        eprintln!("Error Deserialising JSON: {}", e);
+                        Self::default()
+                    }
+                }
+            }
+            Err(e) => { eprintln!("Error reading file {}: {}", file_path, e);
+            Self::default()
+        },
         }
     }
+    
 
     pub fn to_json(&self, file_path: &str) -> Result<(), std::io::Error>{
         let json = serde_json::to_string_pretty(self).expect("Failed to Serialise character");

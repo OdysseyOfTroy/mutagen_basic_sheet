@@ -32,7 +32,7 @@ struct CharacterApp {
 
 impl CharacterApp {
     fn new(_cc: &eframe::CreationContext) -> Self {
-        let character = Character::from_json("character.json").unwrap_or_default();
+        let character = Character::from_json("character.json");
         let mutations = Mutations::from_json("src/base_data/classes.json").unwrap_or_default();
         let skills: Skills  = Skills::from_json("src/base_data/skills.json");
         let weapon_proficiencies: WeaponProficiencies = WeaponProficiencies::from_json("src/base_data/weapon_proficiencies.json");
@@ -70,7 +70,7 @@ impl eframe::App for CharacterApp{
             if let Some(path) = self.file_dialog.take_picked() {
                 self.picked_file = Some(path.to_path_buf());
                 let character_path_str = path.to_string_lossy().to_string();
-                self.character = Character::from_json(&character_path_str).unwrap_or_default();
+                self.character = Character::from_json(&character_path_str);
                 self.str_mod_text = Character::calculate_mod(self.character.strength);
                 self.dsc_mod_text = Character::calculate_mod(self.character.discipline);
                 self.con_mod_text = Character::calculate_mod(self.character.constitution);
