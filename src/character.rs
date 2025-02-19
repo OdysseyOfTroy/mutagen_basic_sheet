@@ -48,4 +48,8 @@ impl Character {
         file.write_all(json.as_bytes())?;
         Ok(())
     }
+
+    pub fn calculate_mod(trait_value: u8) -> String {
+        return ((trait_value / 10) - 2).to_string();
+    }
 }
