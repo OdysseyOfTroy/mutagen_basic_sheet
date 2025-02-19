@@ -1,5 +1,8 @@
 mod character;
 mod mutation;
+mod skills;
+mod enums;
+mod weapon_proficiencies;
 
 use std::path::PathBuf;
 
