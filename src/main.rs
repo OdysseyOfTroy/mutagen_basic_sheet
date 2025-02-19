@@ -19,6 +19,10 @@ struct CharacterApp {
     int_mod_text: String,
     sns_mod_text: String,
     wil_mod_text: String,
+    melee_strike: u8,
+    range_strike: u8,
+    ability_strike: u8,
+    ability_strike_text: String,
     mutations: Mutations,
     file_dialog: FileDialog,
     picked_file: Option<PathBuf>, 
@@ -31,6 +35,12 @@ impl CharacterApp {
         let character = Character::from_json("character.json");
         let mutations = Mutations::from_json("src/base_data/classes.json").unwrap_or_default();
 
+        let range_strike = character.sense;
+        let melee_strike = character.strength;
+        let ability_strike = Character::calculate_ability_strike_trait(&character);
+
+        let ability_strike_text = ability_strike.to_string();
+
         let str_mod_text = Character::calculate_mod(character.strength);
         let dsc_mod_text = Character::calculate_mod(character.discipline);
         let con_mod_text = Character::calculate_mod(character.constitution);
@@ -39,7 +49,7 @@ impl CharacterApp {
         let wil_mod_text = Character::calculate_mod(character.will);
 
         Self { character, mutations, file_dialog: FileDialog::new(), picked_file: None, save_dialog: FileDialog::new(),
-            str_mod_text, dsc_mod_text, con_mod_text, int_mod_text, sns_mod_text, wil_mod_text }
+            str_mod_text, dsc_mod_text, con_mod_text, int_mod_text, sns_mod_text, wil_mod_text, range_strike, melee_strike, ability_strike, ability_strike_text }
     }
 }
 
@@ -92,8 +102,9 @@ impl eframe::App for CharacterApp{
                         .selected_text(&self.character.mutation.name)
                         .show_ui(ui, |ui|{
                             for mutation in &self.mutations.options {
-                                if ui.selectable_value(&mut self.character.mutation, mutation.clone(), &mutation.name).clicked() {
-                                    
+                                if ui.selectable_value(&mut self.character.mutation, mutation.clone(), &mutation.name).changed() {
+                                    let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
+                                    change_ability_strike(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
                                 }
                             }
                         }); 
@@ -150,6 +161,18 @@ impl eframe::App for CharacterApp{
                     ui.separator();
                     ui.end_row();
 
+                    ui.label("Strikes");
+                    ui.end_row();
+                    ui.label("Melee Strike");
+                    let _ = ui.button(self.melee_strike.to_string());
+                    ui.end_row();
+                    ui.label("Ranged Strike");
+                    let _ = ui.button(self.range_strike.to_string());
+                    ui.end_row();
+                    ui.label("Ability Strike");
+                    ui.label(&self.ability_strike_text);
+                    ui.end_row();
+
                     ui.label("Skills");
                     ui.end_row();
                     ui.separator();
@@ -190,9 +213,16 @@ impl eframe::App for CharacterApp{
                 trait_mod_text.push_str(new_trait_mod);
                 ctx.request_repaint();
             }
-        });}
 
-}
+            fn change_ability_strike(ability_strike_text: &mut String, new_ability_strike: &mut String, ctx: &egui::Context) {
+                // println!("{}", new_ability_strike);
+                ability_strike_text.clear();
+                ability_strike_text.push_str(new_ability_strike);
+                ctx.request_repaint();
+            }
+        });}
+    }
+
 fn main() -> eframe::Result<()> {
     eframe::run_native("Mutagen Character Creature", eframe::NativeOptions::default(),
      Box::new(|ctx| Ok(Box::new(CharacterApp::new(ctx)))))
