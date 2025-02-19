@@ -77,88 +77,112 @@ impl eframe::App for CharacterApp{
 
             if let Some(path) = self.save_dialog.update(ctx).picked() {
                 let saving_path_str = path.to_string_lossy().to_string();
-                println!("Mutation data before saving {:?}", self.character.mutation);
                 if let Err(err) = self.character.to_json(&saving_path_str) {
                     eprintln!("Failed to save character: {}", err);
                 }};
         });
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Mutagen Character Sheet");
-            egui::Grid::new("traits_grid").show(ui, |ui| {
-            ui.label("Name:");
-            ui.text_edit_singleline(&mut self.character.name);
-            ui.end_row();
-            egui::ComboBox::from_label("Mutation")
-                .selected_text(&self.character.mutation.name)
-                .show_ui(ui, |ui|{
-                    for mutation in &self.mutations.options {
-                        if ui.selectable_value(&mut self.character.mutation, mutation.clone(), &mutation.name).clicked() {
-                            
-                        }
+            egui::ScrollArea::vertical().show(ui, |ui| {
+                egui::Grid::new("traits_grid").show(ui, |ui| {
+                    ui.label("Name:");
+                    ui.text_edit_singleline(&mut self.character.name);
+                    ui.end_row();
+                    egui::ComboBox::from_label("Mutation")
+                        .selected_text(&self.character.mutation.name)
+                        .show_ui(ui, |ui|{
+                            for mutation in &self.mutations.options {
+                                if ui.selectable_value(&mut self.character.mutation, mutation.clone(), &mutation.name).clicked() {
+                                    
+                                }
+                            }
+                        }); 
+                        ui.end_row();
+                    ui.label("main trait:");
+                    ui.add(Label::new(&self.character.mutation.main_trait));
+                    ui.end_row();
+                    ui.label("Threat Level:");
+                    ui.add(egui::Slider::new(&mut self.character.threat, 1..=10));
+                    ui.end_row();
+                    ui.label("Strength:");
+                    if ui.add(egui::Slider::new(&mut self.character.strength, 1..=100)).changed() {
+                        let mut new_str_mod = ((self.character.strength as i8 / 10 as i8) - 2 as i8).to_string();
+                        change_trait_mod(&mut self.str_mod_text, &mut new_str_mod, ctx);
+                    };
+                    ui.add(egui::Label::new(&self.str_mod_text));
+                    ui.end_row();
+                    ui.label("Discipline:");
+                    if ui.add(egui::Slider::new(&mut self.character.discipline, 1..=100)).changed() {
+                        let mut new_dsc_mod = ((self.character.discipline as i8 / 10 as i8) - 2 as i8).to_string();
+                        change_trait_mod(&mut self.dsc_mod_text, &mut new_dsc_mod, ctx);
+                    };
+                    ui.add(egui::Label::new(&self.dsc_mod_text));
+                    ui.end_row();
+                    ui.label("Constitution:");
+                    if ui.add(egui::Slider::new(&mut self.character.constitution, 1..=100)).changed() {
+                        let mut new_con_mod = ((self.character.constitution as i8 / 10 as i8) - 2 as i8).to_string();
+                        change_trait_mod(&mut self.con_mod_text, &mut new_con_mod, ctx);
+                    };
+                    ui.add(egui::Label::new(&self.con_mod_text));
+                    ui.end_row();
+                    ui.label("Intelligence:");
+                    if ui.add(egui::Slider::new(&mut self.character.intelligence, 1..=100)).changed() {
+                        let mut new_int_mod = ((self.character.intelligence as i8 / 10 as i8) - 2 as i8).to_string();
+                        change_trait_mod(&mut self.int_mod_text, &mut new_int_mod, ctx);
+                    };
+                    ui.add(egui::Label::new(&self.int_mod_text));
+                    ui.end_row();
+                    ui.label("Sense:");
+                    if ui.add(egui::Slider::new(&mut self.character.sense, 1..=100)).changed() {
+                        let mut new_sns_mod = ((self.character.sense as i8 / 10 as i8) - 2 as i8).to_string();
+                        change_trait_mod(&mut self.sns_mod_text, &mut new_sns_mod, ctx);
+                    };
+                    ui.add(egui::Label::new(&self.sns_mod_text));
+                    ui.end_row();
+                    ui.label("Will:");
+                    if ui.add(egui::Slider::new(&mut self.character.will, 1..=100)).changed() {
+                        let mut new_wil_mod = ((self.character.will as i8 / 10 as i8) - 2 as i8).to_string();
+                        change_trait_mod(&mut self.wil_mod_text, &mut new_wil_mod, ctx);
+                    };
+                    ui.add(egui::Label::new(&self.wil_mod_text));
+                    ui.end_row();
+                    
+                    ui.separator();
+                    ui.end_row();
+
+                    ui.label("Skills");
+                    ui.end_row();
+                    ui.separator();
+                    ui.end_row();
+        
+                    for skill in &mut self.character.skills {
+                        ui.label(&skill.name);
+                        ui.radio_value(&mut skill.proficiency_level, enums::Proficiency::Untrained, "Untrained");
+                        ui.radio_value(&mut skill.proficiency_level, enums::Proficiency::Proficient, "Proficient");
+                        ui.radio_value(&mut skill.proficiency_level, enums::Proficiency::Expert, "Expert");
+                        ui.radio_value(&mut skill.proficiency_level, enums::Proficiency::Master, "Master");
+                        ui.end_row();
                     }
-                }); 
-                ui.end_row();
-            ui.label("main trait:");
-            ui.add(Label::new(&self.character.mutation.main_trait));
-            ui.end_row();
-            ui.label("Threat Level:");
-            ui.add(egui::Slider::new(&mut self.character.threat, 1..=10));
-            ui.end_row();
-            ui.label("Strength:");
-            if ui.add(egui::Slider::new(&mut self.character.strength, 1..=100)).changed() {
-                let mut new_str_mod = ((self.character.strength as i8 / 10 as i8) - 2 as i8).to_string();
-                change_trait_mod(&mut self.str_mod_text, &mut new_str_mod, ctx);
-            };
-            ui.add(egui::Label::new(&self.str_mod_text));
-            ui.end_row();
-            ui.label("Discipline:");
-            if ui.add(egui::Slider::new(&mut self.character.discipline, 1..=100)).changed() {
-                let mut new_dsc_mod = ((self.character.discipline as i8 / 10 as i8) - 2 as i8).to_string();
-                change_trait_mod(&mut self.dsc_mod_text, &mut new_dsc_mod, ctx);
-            };
-            ui.add(egui::Label::new(&self.dsc_mod_text));
-            ui.end_row();
-            ui.label("Constitution:");
-            if ui.add(egui::Slider::new(&mut self.character.constitution, 1..=100)).changed() {
-                let mut new_con_mod = ((self.character.constitution as i8 / 10 as i8) - 2 as i8).to_string();
-                change_trait_mod(&mut self.con_mod_text, &mut new_con_mod, ctx);
-            };
-            ui.add(egui::Label::new(&self.con_mod_text));
-            ui.end_row();
-            ui.label("Intelligence:");
-            if ui.add(egui::Slider::new(&mut self.character.intelligence, 1..=100)).changed() {
-                let mut new_int_mod = ((self.character.intelligence as i8 / 10 as i8) - 2 as i8).to_string();
-                change_trait_mod(&mut self.int_mod_text, &mut new_int_mod, ctx);
-            };
-            ui.add(egui::Label::new(&self.int_mod_text));
-            ui.end_row();
-            ui.label("Sense:");
-            if ui.add(egui::Slider::new(&mut self.character.sense, 1..=100)).changed() {
-                let mut new_sns_mod = ((self.character.sense as i8 / 10 as i8) - 2 as i8).to_string();
-                change_trait_mod(&mut self.sns_mod_text, &mut new_sns_mod, ctx);
-            };
-            ui.add(egui::Label::new(&self.sns_mod_text));
-            ui.end_row();
-            ui.label("Will:");
-            if ui.add(egui::Slider::new(&mut self.character.will, 1..=100)).changed() {
-                let mut new_wil_mod = ((self.character.will as i8 / 10 as i8) - 2 as i8).to_string();
-                change_trait_mod(&mut self.wil_mod_text, &mut new_wil_mod, ctx);
-            };
-            ui.add(egui::Label::new(&self.wil_mod_text));
-            ui.end_row();
-
-            for skill in &mut self.character.skills {
-                ui.label(&skill.name);
-                ui.label(&skill.proficiency_level.to_string());
-            }
-            ui.end_row();
-
-            for wep_prof in &mut self.character.weapon_proficiencies {
-                ui.label(&wep_prof.name);
-                ui.label(wep_prof.proficiency_level.to_string()); 
-            }
-            ui.end_row();
-        });
+                    
+                    
+                    ui.separator();
+                    ui.end_row();
+                    ui.label("Weapons");
+                    ui.end_row();
+                    ui.separator();
+                    ui.end_row();
+        
+                    for wep_prof in &mut self.character.weapon_proficiencies {
+                        ui.label(&wep_prof.name);
+                        ui.radio_value(&mut wep_prof.proficiency_level, enums::Proficiency::Untrained, "Untrained");
+                        ui.radio_value(&mut wep_prof.proficiency_level, enums::Proficiency::Proficient, "Proficient");
+                        ui.radio_value(&mut wep_prof.proficiency_level, enums::Proficiency::Expert, "Expert");
+                        ui.radio_value(&mut wep_prof.proficiency_level, enums::Proficiency::Master, "Master");
+                        ui.end_row();
+                    }
+                    
+                })
+            });
 
             
             fn change_trait_mod(trait_mod_text: &mut String, new_trait_mod: &mut String, ctx: &egui::Context) {

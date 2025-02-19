@@ -2,7 +2,7 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize,Deserialize, Clone)]
+#[derive(Serialize,Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "lowercase")]
 pub enum Proficiency {
     Untrained,
