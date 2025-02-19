@@ -22,6 +22,7 @@ struct CharacterApp {
     melee_strike_text: String,
     range_strike_text: String,
     ability_strike_text: String,
+    precision_strike_text: String,
     mutations: Mutations,
     file_dialog: FileDialog,
     picked_file: Option<PathBuf>, 
@@ -37,10 +38,12 @@ impl CharacterApp {
         let range_strike = character.sense;
         let melee_strike = character.strength;
         let ability_strike = Character::calculate_ability_strike_trait(&character);
+        let precision_strike = character.discipline;
 
         let range_strike_text = range_strike.to_string();
         let melee_strike_text = melee_strike.to_string();
         let ability_strike_text = ability_strike.to_string();
+        let precision_strike_text = precision_strike.to_string();
 
         let str_mod_text = Character::calculate_mod(character.strength);
         let dsc_mod_text = Character::calculate_mod(character.discipline);
@@ -50,7 +53,7 @@ impl CharacterApp {
         let wil_mod_text = Character::calculate_mod(character.will);
 
         Self { character, mutations, file_dialog: FileDialog::new(), picked_file: None, save_dialog: FileDialog::new(),
-            str_mod_text, dsc_mod_text, con_mod_text, int_mod_text, sns_mod_text, wil_mod_text, range_strike_text, melee_strike_text, ability_strike_text }
+            str_mod_text, dsc_mod_text, con_mod_text, int_mod_text, sns_mod_text, wil_mod_text, range_strike_text, melee_strike_text, ability_strike_text, precision_strike_text }
     }
 }
 
@@ -143,6 +146,8 @@ impl eframe::App for CharacterApp{
                             let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
                             change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
                         }
+
+                        change_label(&mut self.precision_strike_text, &mut self.character.discipline.to_string(), ctx);
                     };
                     ui.add(egui::Label::new(&self.dsc_mod_text));
                     ui.end_row();
@@ -210,6 +215,9 @@ impl eframe::App for CharacterApp{
                     ui.end_row();
                     ui.label("Ranged Strike");
                     ui.label(&self.range_strike_text);
+                    ui.end_row();
+                    ui.label("Precision Strike");
+                    ui.label(&self.precision_strike_text);
                     ui.end_row();
                     ui.label("Ability Strike");
                     ui.label(&self.ability_strike_text);
