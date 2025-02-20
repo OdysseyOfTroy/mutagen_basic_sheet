@@ -35,6 +35,8 @@ struct CharacterApp {
     calculated_cam_crit_success_value_text: String,
     calculated_cam_crit_fail_value: u8,
     calculated_cam_crit_fail_value_text: String,
+    misc_mod_value: i8,
+    misc_mod_value_text: String,
     mutations: Mutations,
     file_dialog: FileDialog,
     picked_file: Option<PathBuf>, 
@@ -53,10 +55,13 @@ impl CharacterApp {
 
         let calculated_cam_value = selected_trait_value;
         let calculated_cam_value_text = calculated_cam_value.to_string();
-        let calculated_cam_crit_success_value = Character::calcuate_crit_success(calculated_cam_value);
+        let calculated_cam_crit_success_value = Character::calculate_crit_success(calculated_cam_value);
         let calculated_cam_crit_success_value_text = calculated_cam_crit_success_value.to_string();
         let calculated_cam_crit_fail_value = Character::calculate_crit_fail(calculated_cam_value);
         let calculated_cam_crit_fail_value_text = calculated_cam_crit_fail_value.to_string();
+
+        let misc_mod_value = 0;
+        let misc_mod_value_text = misc_mod_value.to_string();
 
         let range_strike = character.sense;
         let melee_strike = character.strength;
@@ -82,7 +87,8 @@ impl CharacterApp {
             selected_proficiency, 
             calculated_cam_value, calculated_cam_value_text,
             calculated_cam_crit_success_value, calculated_cam_crit_success_value_text,
-            calculated_cam_crit_fail_value, calculated_cam_crit_fail_value_text
+            calculated_cam_crit_fail_value, calculated_cam_crit_fail_value_text,
+            misc_mod_value, misc_mod_value_text
         }
     }
 }
@@ -189,6 +195,10 @@ impl eframe::App for CharacterApp{
                 };
                     
             };
+
+            if ui.add(egui::Slider::new(&mut self.misc_mod_value, -50..=50)).changed() {
+
+            }
 
 
             ui.label("Success:");
