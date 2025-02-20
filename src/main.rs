@@ -31,6 +31,10 @@ struct CharacterApp {
     selected_trait_value_text: String,
     calculated_cam_value: u8,
     calculated_cam_value_text: String,
+    calculated_cam_crit_success_value: u8,
+    calculated_cam_crit_success_value_text: String,
+    calculated_cam_crit_fail_value: u8,
+    calculated_cam_crit_fail_value_text: String,
     mutations: Mutations,
     file_dialog: FileDialog,
     picked_file: Option<PathBuf>, 
@@ -46,8 +50,13 @@ impl CharacterApp {
         let selected_proficiency = Proficiency::Untrained;
         let selected_trait_value = character.strength;
         let selected_trait_value_text = character.strength.to_string();
+
         let calculated_cam_value = selected_trait_value;
         let calculated_cam_value_text = calculated_cam_value.to_string();
+        let calculated_cam_crit_success_value = Character::calcuate_crit_success(calculated_cam_value);
+        let calculated_cam_crit_success_value_text = calculated_cam_crit_success_value.to_string();
+        let calculated_cam_crit_fail_value = Character::calculate_crit_fail(calculated_cam_value);
+        let calculated_cam_crit_fail_value_text = calculated_cam_crit_fail_value.to_string();
 
         let range_strike = character.sense;
         let melee_strike = character.strength;
@@ -72,6 +81,8 @@ impl CharacterApp {
             selected_trait,selected_trait_value, selected_trait_value_text, 
             selected_proficiency, 
             calculated_cam_value, calculated_cam_value_text,
+            calculated_cam_crit_success_value, calculated_cam_crit_success_value_text,
+            calculated_cam_crit_fail_value, calculated_cam_crit_fail_value_text
         }
     }
 }
@@ -120,9 +131,15 @@ impl eframe::App for CharacterApp{
                 self.selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
                 self.selected_trait_value_text = self.selected_trait_value.to_string();
 
-                //update calculated cam value
+                //update calculated cam values
                 self.calculated_cam_value = self.selected_trait_value + self.selected_proficiency.value();
                 change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+
+                self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
+
+                self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_fail_value_text, &mut self.calculated_cam_crit_fail_value.to_string(), ctx);
             }
 
             
@@ -147,6 +164,12 @@ impl eframe::App for CharacterApp{
                             self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+
+                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
+
+                self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_fail_value_text, &mut self.calculated_cam_crit_fail_value.to_string(), ctx);
                         }
                     }
                 });
@@ -157,12 +180,25 @@ impl eframe::App for CharacterApp{
                     self.selected_proficiency = prof_level;
                     self.calculated_cam_value = self.selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+
+                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                            change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
+            
+                            self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
+                            change_label(&mut self.calculated_cam_crit_fail_value_text, &mut self.calculated_cam_crit_fail_value.to_string(), ctx);
                 };
                     
             };
 
 
+            ui.label("Success:");
             ui.label(RichText::new(&self.calculated_cam_value_text).size(30.0));
+    
+            ui.label("Crit Success:");
+            ui.label(RichText::new(&self.calculated_cam_crit_success_value_text).size(30.0));
+    
+            ui.label("Crit Fail:");
+            ui.label(RichText::new(&self.calculated_cam_crit_fail_value_text).size(30.0))
 
         });
         egui::CentralPanel::default().show(ctx, |ui| {
@@ -206,6 +242,12 @@ impl eframe::App for CharacterApp{
 
                             self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+
+                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
+
+                self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_fail_value_text, &mut self.calculated_cam_crit_fail_value.to_string(), ctx);
                         }
 
                         //change str mod label
@@ -233,6 +275,12 @@ impl eframe::App for CharacterApp{
 
                             self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+
+                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
+
+                self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_fail_value_text, &mut self.calculated_cam_crit_fail_value.to_string(), ctx);
                         }
 
                         change_label(&mut self.precision_strike_text, &mut self.character.discipline.to_string(), ctx);
@@ -256,6 +304,12 @@ impl eframe::App for CharacterApp{
 
                             self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+
+                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
+
+                self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_fail_value_text, &mut self.calculated_cam_crit_fail_value.to_string(), ctx);
                         }};
                     ui.add(egui::Label::new(&self.con_mod_text));
                     ui.end_row();
@@ -288,6 +342,12 @@ impl eframe::App for CharacterApp{
 
                             self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+
+                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
+
+                self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_fail_value_text, &mut self.calculated_cam_crit_fail_value.to_string(), ctx);
                         }
                         //change sns mod label
                         change_label(&mut self.sns_mod_text, &mut new_sns_mod, ctx);
@@ -313,6 +373,12 @@ impl eframe::App for CharacterApp{
 
                             self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+
+                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
+
+                self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_fail_value_text, &mut self.calculated_cam_crit_fail_value.to_string(), ctx);
                         }
                     };
                     ui.add(egui::Label::new(&self.wil_mod_text));
