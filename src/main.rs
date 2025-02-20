@@ -44,7 +44,7 @@ impl CharacterApp {
         let mutations = Mutations::from_json("src/base_data/classes.json").unwrap_or_default();
         let selected_trait = Traits::Strength;
         let selected_proficiency = Proficiency::Untrained;
-        let selected_trait_value = 0;
+        let selected_trait_value = character.strength;
         let selected_trait_value_text = character.strength.to_string();
         let calculated_cam_value = selected_trait_value;
         let calculated_cam_value_text = calculated_cam_value.to_string();
@@ -96,15 +96,33 @@ impl eframe::App for CharacterApp{
 
             // Check if the user picked a file.
             if let Some(path) = self.file_dialog.take_picked() {
+
+                //update character values from picked file
                 self.picked_file = Some(path.to_path_buf());
                 let character_path_str = path.to_string_lossy().to_string();
                 self.character = Character::from_json(&character_path_str);
+
+                //update mod values
                 self.str_mod_text = Character::calculate_mod(self.character.strength);
                 self.dsc_mod_text = Character::calculate_mod(self.character.discipline);
                 self.con_mod_text = Character::calculate_mod(self.character.constitution);
                 self.int_mod_text = Character::calculate_mod(self.character.intelligence);
                 self.sns_mod_text = Character::calculate_mod(self.character.sense);
                 self.wil_mod_text = Character::calculate_mod(self.character.will);
+        
+                //update strike values
+                self.range_strike_text = self.character.sense.to_string();
+                self.melee_strike_text = self.character.strength.to_string();
+                self.ability_strike_text = Character::calculate_ability_strike_trait(&self.character).to_string();
+                self.precision_strike_text = self.character.discipline.to_string();
+
+                //update selected trait value
+                self.selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
+                self.selected_trait_value_text = self.selected_trait_value.to_string();
+
+                //update calculated cam value
+                self.calculated_cam_value = self.selected_trait_value + self.selected_proficiency.value();
+                change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
             }
 
             
@@ -128,6 +146,7 @@ impl eframe::App for CharacterApp{
                             self.selected_trait_value = new_selected_trait_value;
                             self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
+                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
                         }
                     }
                 });
