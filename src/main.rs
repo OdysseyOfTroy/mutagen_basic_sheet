@@ -135,7 +135,7 @@ impl eframe::App for CharacterApp{
                 self.calculated_cam_value = self.selected_trait_value + self.selected_proficiency.value();
                 change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
-                self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
 
                 self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
@@ -165,7 +165,7 @@ impl eframe::App for CharacterApp{
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
-                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                            self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
 
                 self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
@@ -181,7 +181,7 @@ impl eframe::App for CharacterApp{
                     self.calculated_cam_value = self.selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
-                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                            self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                             change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
             
                             self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
@@ -243,7 +243,7 @@ impl eframe::App for CharacterApp{
                             self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
-                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                            self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
 
                 self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
@@ -276,7 +276,7 @@ impl eframe::App for CharacterApp{
                             self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
-                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                            self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
 
                 self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
@@ -305,7 +305,7 @@ impl eframe::App for CharacterApp{
                             self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
-                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                            self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
 
                 self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
@@ -343,7 +343,7 @@ impl eframe::App for CharacterApp{
                             self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
-                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                            self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
 
                 self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
@@ -374,7 +374,7 @@ impl eframe::App for CharacterApp{
                             self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
-                            self.calculated_cam_crit_success_value = Character::calcuate_crit_success(self.calculated_cam_value);
+                            self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
 
                 self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);

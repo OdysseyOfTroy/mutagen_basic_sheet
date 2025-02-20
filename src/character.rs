@@ -94,7 +94,7 @@ impl Character {
         }
     }
     
-    pub fn calcuate_crit_success(cam_value: u8) -> u8 {
+    pub fn calculate_crit_success(cam_value: u8) -> u8 {
         let pot_crit_succ: i8 = (cam_value / 4).try_into().unwrap();
         if pot_crit_succ < 1 {
             return 1;
