@@ -1,4 +1,3 @@
-use std::fs::{self};
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -7,24 +6,15 @@ pub struct Mutation {
     pub main_trait: String,
 }
 
-#[derive(Serialize,Deserialize)]
-pub struct Mutations {
-    pub options: Vec<Mutation>
-}
-
-impl Default for Mutations {
-    fn default() -> Self {
-        Mutations {options:
-        [Mutation { name: "BioHazard".to_owned(), main_trait: "will".to_owned() }].to_vec()
-    }}
-}
-
-impl Mutations {
-    pub fn from_json(file_path: &str) -> Result<Self, serde_json::Error> {
-        match fs::read_to_string(file_path) {
-            Ok(file_content) => {serde_json::from_str(&file_content)}
-            Err(e) => { println!("Error parsing JSON: {}", e); Ok(Self::default())
-        },
-        }
+impl Mutation {
+    pub fn default() -> Vec<Mutation> {
+        [
+            Mutation {name:"Nova".to_string(), main_trait:"will".to_string()},
+            Mutation {name:"Biohazard".to_string(), main_trait:"constitution".to_string()},
+            Mutation {name: "Chimera".to_string(), main_trait: "strength".to_string()},
+            Mutation {name: "Terra".to_string(), main_trait: "constitution".to_string()},
+            Mutation {name: "Spectre".to_string(), main_trait: "discipline".to_string()},
+            Mutation {name: "Prophet".to_string(), main_trait: "sense".to_string()},
+        ].to_vec()
     }
 }

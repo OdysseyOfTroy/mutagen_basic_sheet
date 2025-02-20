@@ -11,8 +11,7 @@ use character::Character;
 use eframe::egui::{self, Label, RichText};
 use egui_file_dialog::FileDialog;
 use enums::{proficiencies::Proficiency, traits::Traits};
-use mutation::Mutations;
-
+use mutation::Mutation;
 struct CharacterApp {
     character: Character,
     str_mod_text: String,
@@ -36,7 +35,7 @@ struct CharacterApp {
     calculated_cam_crit_fail_value: u8,
     calculated_cam_crit_fail_value_text: String,
     misc_mod_value: i8,
-    mutations: Mutations,
+    mutations: Vec<Mutation>,
     file_dialog: FileDialog,
     picked_file: Option<PathBuf>, 
     save_dialog: FileDialog
@@ -45,8 +44,8 @@ struct CharacterApp {
 
 impl CharacterApp {
     fn new(_cc: &eframe::CreationContext) -> Self {
-        let character = Character::from_json("character.json");
-        let mutations = Mutations::from_json("src/base_data/classes.json").unwrap_or_default();
+        let character = Character::default();
+        let mutations = Mutation::default();
         let selected_trait = Traits::Strength;
         let selected_proficiency = Proficiency::Untrained;
         let selected_trait_value = character.strength;
@@ -226,7 +225,7 @@ impl eframe::App for CharacterApp{
                     egui::ComboBox::from_label("Mutation")
                         .selected_text(&self.character.mutation.name)
                         .show_ui(ui, |ui|{
-                            for mutation in &self.mutations.options {
+                            for mutation in &self.mutations {
                                 if ui.selectable_value(&mut self.character.mutation, mutation.clone(), &mutation.name).clicked() {
                                     let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
                                     change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);

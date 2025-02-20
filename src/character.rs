@@ -31,8 +31,8 @@ impl Default for Character {
             intelligence: 20, 
             sense: 20, 
             will: 20,
-            skills: Skill::from_json("src/base_data/skills.json") ,
-            weapon_proficiencies: WeaponProficiency::from_json("src/base_data/weapon_proficiencies.json"),
+            skills: Skill::default(),
+            weapon_proficiencies: WeaponProficiency::default(),
          }
     }
 }
