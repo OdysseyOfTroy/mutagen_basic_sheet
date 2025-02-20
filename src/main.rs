@@ -196,8 +196,15 @@ impl eframe::App for CharacterApp{
                     
             };
 
-            if ui.add(egui::Slider::new(&mut self.misc_mod_value, -50..=50)).changed() {
+            if ui.add(egui::Slider::new(&mut self.misc_mod_value, -50..=50).step_by(5.0)).changed() {
+                self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
+                change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
+                self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
+
+                self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
+                change_label(&mut self.calculated_cam_crit_fail_value_text, &mut self.calculated_cam_crit_fail_value.to_string(), ctx);
             }
 
 
