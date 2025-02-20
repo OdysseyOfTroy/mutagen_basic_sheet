@@ -29,8 +29,8 @@ struct CharacterApp {
     selected_proficiency: Proficiency,
     selected_trait_value: u8,
     selected_trait_value_text: String,
-    calculated_sam_value: u8,
-    calculated_sam_value_text: String,
+    calculated_cam_value: u8,
+    calculated_cam_value_text: String,
     mutations: Mutations,
     file_dialog: FileDialog,
     picked_file: Option<PathBuf>, 
@@ -46,8 +46,8 @@ impl CharacterApp {
         let selected_proficiency = Proficiency::Untrained;
         let selected_trait_value = 0;
         let selected_trait_value_text = character.strength.to_string();
-        let calculated_sam_value = selected_trait_value;
-        let calculated_sam_value_text = calculated_sam_value.to_string();
+        let calculated_cam_value = selected_trait_value;
+        let calculated_cam_value_text = calculated_cam_value.to_string();
 
         let range_strike = character.sense;
         let melee_strike = character.strength;
@@ -71,7 +71,7 @@ impl CharacterApp {
             range_strike_text, melee_strike_text, ability_strike_text, precision_strike_text, 
             selected_trait,selected_trait_value, selected_trait_value_text, 
             selected_proficiency, 
-            calculated_sam_value, calculated_sam_value_text,
+            calculated_cam_value, calculated_cam_value_text,
         }
     }
 }
@@ -126,7 +126,7 @@ impl eframe::App for CharacterApp{
                             //change selected trait value
                             let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
                             self.selected_trait_value = new_selected_trait_value;
-                            self.calculated_sam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
                         }
                     }
@@ -136,14 +136,14 @@ impl eframe::App for CharacterApp{
                 if ui.add(egui::RadioButton::new(self.selected_proficiency == prof_level.clone(), &prof_level.to_string())).clicked()
                 {
                     self.selected_proficiency = prof_level;
-                    self.calculated_sam_value = self.selected_trait_value + self.selected_proficiency.value();
-                            change_label(&mut self.calculated_sam_value_text, &mut self.calculated_sam_value.to_string(), ctx);
+                    self.calculated_cam_value = self.selected_trait_value + self.selected_proficiency.value();
+                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
                 };
                     
             };
 
 
-            ui.label(RichText::new(&self.calculated_sam_value_text).size(30.0));
+            ui.label(RichText::new(&self.calculated_cam_value_text).size(30.0));
 
         });
         egui::CentralPanel::default().show(ctx, |ui| {
@@ -185,8 +185,8 @@ impl eframe::App for CharacterApp{
                             self.selected_trait_value = new_selected_trait_value;                    
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
-                            self.calculated_sam_value = new_selected_trait_value + self.selected_proficiency.value();
-                            change_label(&mut self.calculated_sam_value_text, &mut self.calculated_sam_value.to_string(), ctx);
+                            self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
                         }
 
                         //change str mod label
@@ -212,8 +212,8 @@ impl eframe::App for CharacterApp{
                             self.selected_trait_value = new_selected_trait_value;
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
-                            self.calculated_sam_value = new_selected_trait_value + self.selected_proficiency.value();
-                            change_label(&mut self.calculated_sam_value_text, &mut self.calculated_sam_value.to_string(), ctx);
+                            self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
                         }
 
                         change_label(&mut self.precision_strike_text, &mut self.character.discipline.to_string(), ctx);
@@ -235,8 +235,8 @@ impl eframe::App for CharacterApp{
                             self.selected_trait_value = new_selected_trait_value;
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
-                            self.calculated_sam_value = new_selected_trait_value + self.selected_proficiency.value();
-                            change_label(&mut self.calculated_sam_value_text, &mut self.calculated_sam_value.to_string(), ctx);
+                            self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
                         }};
                     ui.add(egui::Label::new(&self.con_mod_text));
                     ui.end_row();
@@ -267,8 +267,8 @@ impl eframe::App for CharacterApp{
                             self.selected_trait_value = new_selected_trait_value;
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
-                            self.calculated_sam_value = new_selected_trait_value + self.selected_proficiency.value();
-                            change_label(&mut self.calculated_sam_value_text, &mut self.calculated_sam_value.to_string(), ctx);
+                            self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
                         }
                         //change sns mod label
                         change_label(&mut self.sns_mod_text, &mut new_sns_mod, ctx);
@@ -292,8 +292,8 @@ impl eframe::App for CharacterApp{
                             self.selected_trait_value = new_selected_trait_value;
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
-                            self.calculated_sam_value = new_selected_trait_value + self.selected_proficiency.value();
-                            change_label(&mut self.calculated_sam_value_text, &mut self.calculated_sam_value.to_string(), ctx);
+                            self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
                         }
                     };
                     ui.add(egui::Label::new(&self.wil_mod_text));
