@@ -138,7 +138,7 @@ impl eframe::App for CharacterApp{
                 self.selected_trait_value_text = self.selected_trait_value.to_string();
 
                 //update calculated cam values
-                self.calculated_cam_value = self.selected_trait_value + self.selected_proficiency.value();
+                self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
                 change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
                 self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
@@ -167,7 +167,7 @@ impl eframe::App for CharacterApp{
                             //change selected trait value
                             let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
                             self.selected_trait_value = new_selected_trait_value;
-                            self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            self.calculated_cam_value = Character::calculate_success(new_selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
@@ -184,7 +184,7 @@ impl eframe::App for CharacterApp{
                 if ui.add(egui::RadioButton::new(self.selected_proficiency == prof_level.clone(), &prof_level.to_string())).clicked()
                 {
                     self.selected_proficiency = prof_level;
-                    self.calculated_cam_value = self.selected_trait_value + self.selected_proficiency.value();
+                    self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
                             self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
@@ -250,7 +250,7 @@ impl eframe::App for CharacterApp{
                             self.selected_trait_value = new_selected_trait_value;                    
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
-                            self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
                             self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
@@ -283,7 +283,7 @@ impl eframe::App for CharacterApp{
                             self.selected_trait_value = new_selected_trait_value;
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
-                            self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
                             self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
@@ -312,7 +312,7 @@ impl eframe::App for CharacterApp{
                             self.selected_trait_value = new_selected_trait_value;
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
-                            self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
                             self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
@@ -350,7 +350,7 @@ impl eframe::App for CharacterApp{
                             self.selected_trait_value = new_selected_trait_value;
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
-                            self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
                             self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
@@ -381,7 +381,7 @@ impl eframe::App for CharacterApp{
                             self.selected_trait_value = new_selected_trait_value;
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
-                            self.calculated_cam_value = new_selected_trait_value + self.selected_proficiency.value();
+                            self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
                             change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
                             self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);

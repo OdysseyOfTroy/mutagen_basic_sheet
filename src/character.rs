@@ -93,6 +93,15 @@ impl Character {
             _ => 0, // Default value if trait is not found
         }
     }
+
+    pub fn calculate_success(trait_value: u8, prof_value: u8, misc_value: i8) -> u8 {
+        let pot_succ: i8 = trait_value as i8 + prof_value as i8 + misc_value;
+        if pot_succ < 1 {
+            return 1;
+        } else {
+            return pot_succ as u8;
+        }
+    }
     
     pub fn calculate_crit_success(cam_value: u8) -> u8 {
         let pot_crit_succ: i8 = (cam_value / 4).try_into().unwrap();
