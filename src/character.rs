@@ -114,7 +114,8 @@ impl Character {
     }
 
     pub fn calculate_crit_fail(cam_value: u8) -> u8 {
-        let pot_crit_fail: u8 = cam_value * 2;
+        //pot_crit_fail previously declared as u8 but was changed to u16 to prevent overflow as cam_value can be up to 100 so the max value of pot_crit_fail can be 200
+        let pot_crit_fail: u16 = cam_value as u16 * 2;
         if pot_crit_fail > 100 {
             return 100;
         } else {
