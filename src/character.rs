@@ -2,7 +2,7 @@ use std::{fs::{self, File}, io::Write};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{mutation::Mutation, skills::Skill, weapon_proficiencies::WeaponProficiency};
+use crate::{enums::traits::Traits, mutation::Mutation, skills::Skill, weapon_proficiencies::WeaponProficiency};
 
 #[derive(Serialize, Deserialize)]
 pub struct Character {
@@ -81,5 +81,45 @@ impl Character {
             _ => 0, // Default value if trait is not found
         }
     }
+
+    pub fn get_trait_value(character: &Character, selected_trait: &Traits) -> u8 {
+        match selected_trait.to_string().as_str() {
+            "Strength" => character.strength,
+            "Discipline" => character.discipline,
+            "Constitution" => character.constitution,
+            "Intelligence" => character.intelligence,
+            "Sense" => character.sense,
+            "Will" => character.will,
+            _ => 0, // Default value if trait is not found
+        }
+    }
+
+    pub fn calculate_success(trait_value: u8, prof_value: u8, misc_value: i8) -> u8 {
+        //pot_succ previously declared as i8 but was changed to i16 to prevent overflow as pot succ has the potential range of -30 to 180 exceeding the range of i8
+        let pot_succ: i16 = trait_value as i16 + prof_value as i16 + misc_value as i16;
+        if pot_succ < 1 {
+            return 1;
+        } else {
+            return pot_succ as u8;
+        }
+    }
     
+    pub fn calculate_crit_success(cam_value: u8) -> u8 {
+        let pot_crit_succ: i8 = (cam_value / 4).try_into().unwrap();
+        if pot_crit_succ < 1 {
+            return 1;
+        } else {
+            return pot_crit_succ as u8;
+        }
+    }
+
+    pub fn calculate_crit_fail(cam_value: u8) -> u8 {
+        //pot_crit_fail previously declared as u8 but was changed to u16 to prevent overflow as cam_value can be up to 100 so the max value of pot_crit_fail can be 200
+        let pot_crit_fail: u16 = cam_value as u16 * 2;
+        if pot_crit_fail > 100 {
+            return 100;
+        } else {
+            return pot_crit_fail as u8;
+        }
+    }
 }

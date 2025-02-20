@@ -1,7 +1,7 @@
 use std::fs;
 use serde::{Deserialize, Serialize};
 
-use crate::enums::Proficiency;
+use crate::enums::proficiencies::Proficiency;
 
 #[derive(Serialize,Deserialize, Clone)]
 pub struct WeaponProficiency {

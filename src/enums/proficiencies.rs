@@ -2,7 +2,7 @@ use std::fmt;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize,Deserialize, Clone, PartialEq)]
+#[derive(Serialize,Deserialize, Clone, PartialEq, Copy)]
 #[serde(rename_all = "lowercase")]
 pub enum Proficiency {
     Untrained,
@@ -14,6 +14,21 @@ pub enum Proficiency {
 impl Default for Proficiency {
     fn default() -> Self {
         Proficiency::Untrained
+    }
+}
+
+impl Proficiency {
+    pub fn iterator() -> impl Iterator<Item = Proficiency> {
+        [Proficiency::Untrained, Proficiency::Proficient, Proficiency::Expert, Proficiency::Master].iter().copied()
+    }
+
+    pub fn value(&self) -> u8 {
+        match self {
+            Proficiency::Untrained => 0,
+            Proficiency::Proficient => 10,
+            Proficiency::Expert => 20,
+            Proficiency::Master => 30,
+        }
     }
 }
 
