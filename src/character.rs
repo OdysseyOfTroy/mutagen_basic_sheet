@@ -95,7 +95,8 @@ impl Character {
     }
 
     pub fn calculate_success(trait_value: u8, prof_value: u8, misc_value: i8) -> u8 {
-        let pot_succ: i8 = trait_value as i8 + prof_value as i8 + misc_value;
+        //pot_succ previously declared as i8 but was changed to i16 to prevent overflow as pot succ has the potential range of -30 to 180 exceeding the range of i8
+        let pot_succ: i16 = trait_value as i16 + prof_value as i16 + misc_value as i16;
         if pot_succ < 1 {
             return 1;
         } else {
