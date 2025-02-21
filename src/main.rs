@@ -216,7 +216,7 @@ impl eframe::App for CharacterApp{
 
         });
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("Mutagen Character Sheet");
+            ui.heading("Mutant Assessment");
             egui::ScrollArea::vertical().show(ui, |ui| {
                 egui::Grid::new("traits_grid").show(ui, |ui| {
                     ui.label("Name:");
@@ -470,6 +470,6 @@ impl eframe::App for CharacterApp{
     }
 
 fn main() -> eframe::Result<()> {
-    eframe::run_native("Mutagen Character Creature", eframe::NativeOptions::default(),
+    eframe::run_native("Mutant Automated Assistance Module", eframe::NativeOptions::default(),
      Box::new(|ctx| Ok(Box::new(CharacterApp::new(ctx)))))
 }
