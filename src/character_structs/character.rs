@@ -17,7 +17,7 @@ pub struct Character {
     pub sense: u8,
     pub will: u8,
     pub skills: Vec<Skill>,
-    pub weapon_proficiencies: Vec<WeaponProficiency>
+    pub weapon_proficiencies: [WeaponProficiency; 13]
 }
 
 impl Default for Character {

@@ -2,14 +2,14 @@ use serde::{Deserialize, Serialize};
 
 use crate::enums::proficiencies::Proficiency;
 
-#[derive(Serialize,Deserialize, Clone)]
+#[derive(Serialize,Deserialize)]
 pub struct WeaponProficiency {
     pub name: String,
     pub proficiency_level: Proficiency,
 }
 
 impl WeaponProficiency{
-    pub fn default() -> Vec<WeaponProficiency> {
+    pub fn default() -> [WeaponProficiency; 13] {
         [
         WeaponProficiency {name: "Blade".to_string(), proficiency_level: Proficiency::Untrained},
         WeaponProficiency {name: "Hammer".to_string(), proficiency_level: Proficiency::Untrained},
@@ -24,7 +24,7 @@ impl WeaponProficiency{
         WeaponProficiency {name: "Arc".to_string(), proficiency_level: Proficiency::Untrained},
         WeaponProficiency {name: "Gatling".to_string(), proficiency_level: Proficiency::Untrained},
         WeaponProficiency {name: "Whip".to_string(), proficiency_level: Proficiency::Untrained}
-].to_vec()
+]
     }
     // pub fn from_json(file_path: &str) -> Vec<WeaponProficiency> {
 
