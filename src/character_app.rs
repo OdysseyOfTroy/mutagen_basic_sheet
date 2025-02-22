@@ -23,7 +23,8 @@ pub(crate) struct CharacterApp {
     selected_trait_value: u8,
     selected_trait_value_text: String,
     calculated_cam_value: u8,
-    calculated_cam_value_text: String,
+    displayed_cam_value: u8,
+    displayed_cam_value_text: String,
     calculated_cam_crit_success_value: u8,
     calculated_cam_crit_success_value_text: String,
     calculated_cam_crit_fail_value: u8,
@@ -46,7 +47,8 @@ impl CharacterApp {
         let selected_trait_value_text = character.strength.to_string();
 
         let calculated_cam_value = selected_trait_value;
-        let calculated_cam_value_text = calculated_cam_value.to_string();
+        let displayed_cam_value = calculated_cam_value;
+        let displayed_cam_value_text = format!("{} %", displayed_cam_value);
         let calculated_cam_crit_success_value = Character::calculate_crit_success(calculated_cam_value);
         let calculated_cam_crit_success_value_text = calculated_cam_crit_success_value.to_string();
         let calculated_cam_crit_fail_value = Character::calculate_crit_fail(calculated_cam_value);
@@ -76,10 +78,10 @@ impl CharacterApp {
             range_strike_text, melee_strike_text, ability_strike_text, precision_strike_text, 
             selected_trait,selected_trait_value, selected_trait_value_text, 
             selected_proficiency, 
-            calculated_cam_value, calculated_cam_value_text,
+            calculated_cam_value,displayed_cam_value, displayed_cam_value_text,
             calculated_cam_crit_success_value, calculated_cam_crit_success_value_text,
             calculated_cam_crit_fail_value, calculated_cam_crit_fail_value_text,
-            misc_mod_value
+            misc_mod_value,
         }
     }
 }
@@ -130,7 +132,8 @@ impl eframe::App for CharacterApp{
 
                 //update calculated cam values
                 self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
-                change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+                self.displayed_cam_value = calculate_display_success(self.calculated_cam_value);
+                change_label(&mut self.displayed_cam_value_text, &mut to_percentage_string(self.displayed_cam_value), ctx);
 
                 self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
@@ -159,8 +162,9 @@ impl eframe::App for CharacterApp{
                             let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
                             self.selected_trait_value = new_selected_trait_value;
                             self.calculated_cam_value = Character::calculate_success(new_selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
+                            self.displayed_cam_value = calculate_display_success(self.calculated_cam_value);
+                            change_label(&mut self.displayed_cam_value_text, &mut to_percentage_string(self.displayed_cam_value), ctx);
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
-                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
 
                             self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
@@ -176,7 +180,8 @@ impl eframe::App for CharacterApp{
                 {
                     self.selected_proficiency = prof_level;
                     self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
-                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+                    self.displayed_cam_value = calculate_display_success(self.calculated_cam_value);
+                    change_label(&mut self.displayed_cam_value_text, &mut to_percentage_string(self.displayed_cam_value), ctx);
 
                             self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                             change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
@@ -189,7 +194,8 @@ impl eframe::App for CharacterApp{
 
             if ui.add(egui::Slider::new(&mut self.misc_mod_value, -50..=50).step_by(5.0)).changed() {
                 self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
-                change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+                self.displayed_cam_value = calculate_display_success(self.calculated_cam_value);
+                change_label(&mut self.displayed_cam_value_text, &mut to_percentage_string(self.displayed_cam_value), ctx);
 
                 self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
@@ -200,7 +206,7 @@ impl eframe::App for CharacterApp{
 
 
             ui.label("Success:");
-            ui.label(RichText::new(&self.calculated_cam_value_text).size(30.0));
+            ui.label(RichText::new(&self.displayed_cam_value_text).size(30.0));
     
             ui.label("Crit Success:");
             ui.label(RichText::new(&self.calculated_cam_crit_success_value_text).size(30.0));
@@ -249,7 +255,8 @@ impl eframe::App for CharacterApp{
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
                             self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
-                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+                            self.displayed_cam_value = calculate_display_success(self.calculated_cam_value);
+                change_label(&mut self.displayed_cam_value_text, &mut to_percentage_string(self.displayed_cam_value), ctx);
 
                             self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
@@ -282,7 +289,8 @@ impl eframe::App for CharacterApp{
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
                             self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
-                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+                            self.displayed_cam_value = calculate_display_success(self.calculated_cam_value);
+                change_label(&mut self.displayed_cam_value_text, &mut to_percentage_string(self.displayed_cam_value), ctx);
 
                             self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
@@ -311,7 +319,8 @@ impl eframe::App for CharacterApp{
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
                             self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
-                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+                            self.displayed_cam_value = calculate_display_success(self.calculated_cam_value);
+                change_label(&mut self.displayed_cam_value_text, &mut to_percentage_string(self.displayed_cam_value), ctx);
 
                             self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
@@ -349,7 +358,8 @@ impl eframe::App for CharacterApp{
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
                             self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
-                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+                            self.displayed_cam_value = calculate_display_success(self.calculated_cam_value);
+                change_label(&mut self.displayed_cam_value_text, &mut to_percentage_string(self.displayed_cam_value), ctx);
 
                             self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
@@ -380,7 +390,8 @@ impl eframe::App for CharacterApp{
                             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
 
                             self.calculated_cam_value = Character::calculate_success(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value);
-                            change_label(&mut self.calculated_cam_value_text, &mut self.calculated_cam_value.to_string(), ctx);
+                            self.displayed_cam_value = calculate_display_success(self.calculated_cam_value);
+                change_label(&mut self.displayed_cam_value_text, &mut to_percentage_string(self.displayed_cam_value), ctx);
 
                             self.calculated_cam_crit_success_value = Character::calculate_crit_success(self.calculated_cam_value);
                 change_label(&mut self.calculated_cam_crit_success_value_text, &mut self.calculated_cam_crit_success_value.to_string(), ctx);
@@ -459,6 +470,18 @@ impl eframe::App for CharacterApp{
             label_text.clear();
             label_text.push_str(new_label_text);
             ctx.request_repaint();
+        }
+
+        fn calculate_display_success(cam_value: u8) -> u8 {
+            if cam_value >= 100 {
+                99
+            } else {
+                cam_value
+            }
+        }
+
+        fn to_percentage_string(value: u8) -> String {
+            format!("{} %", value)
         }
     }
     }
