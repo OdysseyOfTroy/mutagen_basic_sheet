@@ -2,7 +2,8 @@ use std::{fs::{self, File}, io::Write};
 
 use serde::{Deserialize, Serialize};
 
-use crate::{enums::traits::Traits, mutation::Mutation, skills::Skill, weapon_proficiencies::WeaponProficiency};
+use crate::enums::traits::Traits;
+use crate::character_structs::{skills::Skill, weapon_proficiencies::WeaponProficiency, mutation::Mutation};
 
 #[derive(Serialize, Deserialize)]
 pub struct Character {

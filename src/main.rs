@@ -1,10 +1,6 @@
-mod character;
-mod mutation;
-mod skills;
 mod character_app;
 pub mod enums;
-
-mod weapon_proficiencies;
+pub mod character_structs;
 
 use character_app::CharacterApp;
 

@@ -3,7 +3,8 @@ use std::path::PathBuf;
 use eframe::egui::{self, RichText};
 use egui_file_dialog::FileDialog;
 
-use crate::{character::Character, enums::{proficiencies::Proficiency, traits::Traits}, mutation::Mutation};
+use crate::enums::{proficiencies::Proficiency, traits::Traits};
+use crate::character_structs::{character::Character, mutation::Mutation};
 
 pub(crate) struct CharacterApp {
     character: Character,
