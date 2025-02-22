@@ -8,3 +8,12 @@ eframe = "0.31"
 egui-file-dialog = "0.9.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+
+[package.metadata.bundle]
+name = "MAAM"
+identifier = "io.github.OdysseyOfTroy.mutagen_basic_sheet"
+version = "0.1.0"
+icon = ["assets/mutagen_*.png"]
+copyright = "Copyright (c) OdysseyOfTroy 2025. All rights reserved."
+category = "Entertainment"
+short_description = "Mutagen Automated Assistant Module (MAAM) is a companion app for the Mutagen TTRPG which is currently in development."
