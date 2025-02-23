@@ -409,12 +409,11 @@ impl eframe::App for CharacterApp{
                     ui.end_row();
         
                     for wep_prof in &mut self.character.weapon_proficiencies {
-                        ui.label(&wep_prof.name);
-                        ui.radio_value(&mut wep_prof.proficiency_level, Proficiency::Untrained, "Untrained");
-                        ui.radio_value(&mut wep_prof.proficiency_level, Proficiency::Proficient, "Proficient");
-                        ui.radio_value(&mut wep_prof.proficiency_level, Proficiency::Expert, "Expert");
-                        ui.radio_value(&mut wep_prof.proficiency_level, Proficiency::Master, "Master");
                         ui.end_row();
+                        ui.label(&wep_prof.name);
+                        for prof_level in Proficiency::iterator() {
+                            ui.radio_value(&mut wep_prof.proficiency_level, prof_level, &prof_level.to_string());
+                        }
                     }
                     
                 })
