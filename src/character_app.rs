@@ -96,6 +96,30 @@ impl CharacterApp {
         self.calculated_cam_crit_fail_value = Character::calculate_crit_fail(self.calculated_cam_value);
         change_label(&mut self.calculated_cam_crit_fail_value_text, &mut self.calculated_cam_crit_fail_value.to_string(), ctx);
     }
+
+    fn matching_trait_checks(&mut self, this_trait: Traits, ctx: &egui::Context) {
+        //change ability strike label
+        if determine_matching_trait(&mut self.character.mutation.main_trait, &this_trait) {
+            let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
+            change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
+        }
+        //change selected trait value label
+        if determine_matching_trait(&mut self.selected_trait, &this_trait) {
+            let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
+            self.selected_trait_value = new_selected_trait_value;
+            change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
+
+            self.c_a_m(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value, ctx);
+        }
+    }
+}
+
+fn determine_matching_trait(main_trait: &mut Traits, this_trait: &Traits) -> bool {
+    if main_trait == this_trait {
+        true
+    } else {
+        false
+    }
 }
 
 pub fn calculate_display_success(cam_value: u8) -> u8 {
@@ -235,7 +259,7 @@ impl eframe::App for CharacterApp{
                         }); 
                         ui.end_row();
                     ui.label("main trait:");
-                    ui.label(&self.character.mutation.main_trait);
+                    ui.label(&self.character.mutation.main_trait.to_string());
                     ui.end_row();
                     ui.label("Threat Level:");
                     ui.add(egui::Slider::new(&mut self.character.threat, 1..=10));
@@ -244,46 +268,18 @@ impl eframe::App for CharacterApp{
                     ui.label("Strength:");
                     if ui.add(egui::Slider::new(&mut self.character.strength, 1..=100)).changed() {
                         let mut new_str_mod = ((self.character.strength as i8 / 10 as i8) - 2 as i8).to_string();
-                        //change ability strike label
-                        if determine_matching_trait(&mut self.character.mutation.main_trait, &mut "strength".to_string()) {
-                            let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
-                            change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
-                        }
-                        //change selected trait value label
-                        if determine_matching_trait(&mut self.selected_trait.to_string(), &mut "Strength".to_string()) {
-                            let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
-                            self.selected_trait_value = new_selected_trait_value;                    
-                            change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
-
-                            self.c_a_m(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value, ctx);
-                        }
-
-                        //change str mod label
                         change_label(&mut self.str_mod_text, &mut new_str_mod, ctx);
-                        //change melee strike label
+                        self.matching_trait_checks(Traits::Strength, ctx);
                         change_label(&mut self.melee_strike_text, &mut self.character.strength.to_string(), ctx);
-                        
                     };
                     ui.add(egui::Label::new(&self.str_mod_text));
                     ui.end_row();
+
                     ui.label("Discipline:");
                     if ui.add(egui::Slider::new(&mut self.character.discipline, 1..=100)).changed() {
                         let mut new_dsc_mod = ((self.character.discipline as i8 / 10 as i8) - 2 as i8).to_string();
                         change_label(&mut self.dsc_mod_text, &mut new_dsc_mod, ctx);
-                        //change ability strike label
-                        if determine_matching_trait(&mut self.character.mutation.main_trait, &mut "discipline".to_string()) {
-                            let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
-                            change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
-                        }
-                        //change selected trait value label
-                        if determine_matching_trait(&mut self.selected_trait.to_string(), &mut "Discipline".to_string()) {
-                            let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
-                            self.selected_trait_value = new_selected_trait_value;
-                            change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
-
-                            self.c_a_m(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value, ctx);
-                        }
-
+                        self.matching_trait_checks(Traits::Discipline, ctx);
                         change_label(&mut self.precision_strike_text, &mut self.character.discipline.to_string(), ctx);
                     };
                     ui.add(egui::Label::new(&self.dsc_mod_text));
@@ -292,75 +288,35 @@ impl eframe::App for CharacterApp{
                     if ui.add(egui::Slider::new(&mut self.character.constitution, 1..=100)).changed() {
                         let mut new_con_mod = ((self.character.constitution as i8 / 10 as i8) - 2 as i8).to_string();
                         change_label(&mut self.con_mod_text, &mut new_con_mod, ctx);
-                        //change ability strike label
-                        if determine_matching_trait(&mut self.character.mutation.main_trait, &mut "constitution".to_string()) {
-                            let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
-                            change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
-                        }
-                        //change selected trait value label
-                        if determine_matching_trait(&mut self.selected_trait.to_string(), &mut "Constitution".to_string()) {
-                            let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
-                            self.selected_trait_value = new_selected_trait_value;
-                            change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
-
-                            // self.calculated_cam_value = 
-                            self.c_a_m(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value, ctx);
-                        }};
+                        self.matching_trait_checks(Traits::Constitution, ctx);
+                    };
                     ui.add(egui::Label::new(&self.con_mod_text));
                     ui.end_row();
+
                     ui.label("Intelligence:");
                     if ui.add(egui::Slider::new(&mut self.character.intelligence, 1..=100)).changed() {
                         let mut new_int_mod = ((self.character.intelligence as i8 / 10 as i8) - 2 as i8).to_string();
                         change_label(&mut self.int_mod_text, &mut new_int_mod, ctx);
-
-                        if determine_matching_trait(&mut self.character.mutation.main_trait, &mut "intelligence".to_string()) {
-                            let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
-                            change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
-                        }
+                        self.matching_trait_checks(Traits::Intelligence, ctx);
                     };
                     ui.add(egui::Label::new(&self.int_mod_text));
                     ui.end_row();
+
                     ui.label("Sense:");
                     if ui.add(egui::Slider::new(&mut self.character.sense, 1..=100)).changed() {
                         let mut new_sns_mod = ((self.character.sense as i8 / 10 as i8) - 2 as i8).to_string();
-                        //change ability strike label
-                        if determine_matching_trait(&mut self.character.mutation.main_trait, &mut "sense".to_string()) {
-                            let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
-                            change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
-                        }
-
-                        //change selected trait value label
-                        if determine_matching_trait(&mut self.selected_trait.to_string(), &mut "Sense".to_string()) {
-                            let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
-                            self.selected_trait_value = new_selected_trait_value;
-                            change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
-
-                            self.c_a_m(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value, ctx);
-                        }
-                        //change sns mod label
                         change_label(&mut self.sns_mod_text, &mut new_sns_mod, ctx);
-                        //change ranged strike label
+                        self.matching_trait_checks(Traits::Sense, ctx);
                         change_label(&mut self.range_strike_text, &mut self.character.sense.to_string(), ctx);
                     };
                     ui.add(egui::Label::new(&self.sns_mod_text));
                     ui.end_row();
+                    
                     ui.label("Will:");
                     if ui.add(egui::Slider::new(&mut self.character.will, 1..=100)).changed() {
                         let mut new_wil_mod = ((self.character.will as i8 / 10 as i8) - 2 as i8).to_string();
                         change_label(&mut self.wil_mod_text, &mut new_wil_mod, ctx);
-                        //change ability strike label
-                        if determine_matching_trait(&mut self.character.mutation.main_trait, &mut "will".to_string()) {
-                            let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
-                            change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
-                        }
-                        //change selected trait value label
-                        if determine_matching_trait(&mut self.selected_trait.to_string(), &mut "Will".to_string()) {
-                            let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
-                            self.selected_trait_value = new_selected_trait_value;
-                            change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
-
-                            self.c_a_m(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value, ctx);
-                        }
+                        self.matching_trait_checks(Traits::Will, ctx);
                     };
                     ui.add(egui::Label::new(&self.wil_mod_text));
                     ui.end_row();
@@ -417,14 +373,6 @@ impl eframe::App for CharacterApp{
                     
                 })
             });
-
-            fn determine_matching_trait(main_trait: &mut String, this_trait: &mut String) -> bool {
-                if main_trait == this_trait {
-                    true
-                } else {
-                    false
-                }
-            }
         });
 
     }}
