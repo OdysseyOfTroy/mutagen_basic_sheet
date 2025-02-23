@@ -24,7 +24,7 @@ impl Default for Character {
     fn default() -> Self {
         Character { 
             name: "".to_string(), 
-            mutation: Mutation { name:"Chimera".to_string(), main_trait: "strength".to_string() },
+            mutation: Mutation { name:"Chimera".to_string(), main_trait: Traits::Strength },
             threat: 1, 
             strength: 20, 
             discipline: 20, 
@@ -72,14 +72,13 @@ impl Character {
 
 
     pub fn calculate_ability_strike_trait(character: &Character) -> u8 {
-        match character.mutation.main_trait.to_lowercase().as_str() {
-            "strength" => character.strength,
-            "discipline" => character.discipline,
-            "constitution" => character.constitution,
-            "intelligence" => character.intelligence,
-            "sense" => character.sense,
-            "will" => character.will,
-            _ => 0, // Default value if trait is not found
+        match character.mutation.main_trait {
+            Traits::Strength => character.strength,
+            Traits::Discipline => character.discipline,
+            Traits::Constitution => character.constitution,
+            Traits::Intelligence => character.intelligence,
+            Traits::Sense => character.sense,
+            Traits::Will => character.will,
         }
     }
 
