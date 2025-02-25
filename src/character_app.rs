@@ -188,8 +188,6 @@ impl eframe::App for CharacterApp{
                 self.c_a_m(self.selected_trait_value, self.selected_proficiency.value(),self.misc_mod_value, ctx);
             }
 
-            
-
             if let Some(path) = self.save_dialog.update(ctx).picked() {
                 let saving_path_str = path.to_string_lossy().to_string();
                 if let Err(err) = self.character.to_json(&saving_path_str) {
@@ -311,7 +309,7 @@ impl eframe::App for CharacterApp{
                     };
                     ui.add(egui::Label::new(&self.sns_mod_text));
                     ui.end_row();
-                    
+
                     ui.label("Will:");
                     if ui.add(egui::Slider::new(&mut self.character.will, 1..=100)).changed() {
                         let mut new_wil_mod = ((self.character.will as i8 / 10 as i8) - 2 as i8).to_string();
