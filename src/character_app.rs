@@ -138,7 +138,7 @@ pub fn change_label(label_text: &mut String, new_label_text: &mut str, ctx: &egu
 impl eframe::App for CharacterApp{
     fn update(&mut self, ctx: &egui::Context , _frame: &mut eframe::Frame) {
      egui::TopBottomPanel::top("menu").frame(egui::Frame { inner_margin: egui::Margin { left: 0, right: 0, top: 0, bottom: 0 }, 
-            fill: egui::Color32::DARK_GRAY, 
+            fill: egui::Color32::from_rgb(67, 25, 86),
             stroke: egui::Stroke { width: 0.0, color: egui::Color32::BLACK }, 
             corner_radius: egui::CornerRadius { nw: 0, ne: 0, sw: 0, se: 0 }, 
             outer_margin: egui::Margin { left: 0, right: 0, top: 0, bottom: 0 }, 
@@ -245,6 +245,7 @@ impl eframe::App for CharacterApp{
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Mutant Assessment");
             egui::ScrollArea::vertical().show(ui, |ui| {
+                egui::Grid::new("body_grid").show(ui, |ui| {
                 egui::Grid::new("traits_grid").show(ui, |ui| {
                     ui.label("Name:");
                     ui.text_edit_singleline(&mut self.character.name);
@@ -341,24 +342,7 @@ impl eframe::App for CharacterApp{
                     ui.label("Ability Strike");
                     ui.label(&self.ability_strike_text);
                     ui.end_row();
-
-                    //Skills Section
-                    ui.label("Skills");
-                    ui.end_row();
-                    ui.separator();
-                    ui.end_row();
-        
-                    for skill in &mut self.character.skills {
-                        ui.label(&skill.name);
-                        for prof_level in Proficiency::iterator() {
-                            ui.radio_value(&mut skill.proficiency_level, prof_level, prof_level.to_string());
-                        }
-                        ui.end_row();
-                    }
-                    
-                    ui.separator();
-                    ui.end_row();
-
+                   
                     //Weapon Proficiency Section
                     ui.label("Weapons");
                     ui.end_row();
@@ -367,12 +351,36 @@ impl eframe::App for CharacterApp{
         
                     for wep_prof in &mut self.character.weapon_proficiencies {
                         ui.label(&wep_prof.name);
-                        for prof_level in Proficiency::iterator() {
-                            ui.radio_value(&mut wep_prof.proficiency_level, prof_level, prof_level.to_string());
-                        }
+                        egui::ComboBox::from_id_salt(&wep_prof.name)
+                        .selected_text(wep_prof.proficiency_level.to_string())
+                        .show_ui(ui, |ui| {
+                            for prof_level in Proficiency::iterator() {
+                                ui.selectable_value(&mut wep_prof.proficiency_level, prof_level, prof_level.to_string());
+                            }
+                        });
                         ui.end_row();
                     }
                     
+                });
+                    egui::Grid::new("skills grid").show(ui, |ui| {
+                    //Skills Section
+                    ui.label("Skills");
+                    ui.end_row();
+                    ui.separator();
+                    ui.end_row();
+
+                    for skill in &mut self.character.skills{
+                        ui.label(&skill.name);
+                        egui::ComboBox::from_id_salt(&skill.name)
+                        .selected_text(skill.proficiency_level.to_string())
+                        .show_ui(ui, |ui| {
+                                for prof_level in Proficiency::iterator() {
+                                   ui.selectable_value(&mut skill.proficiency_level, prof_level, prof_level.to_string());
+                        }
+                            });
+                        ui.end_row();
+                    }
+                })
                 })
             });
         });
