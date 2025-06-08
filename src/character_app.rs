@@ -36,7 +36,6 @@ pub(crate) struct CharacterApp {
     save_dialog: FileDialog
 }
 
-
 impl CharacterApp {
     pub fn new(_cc: &eframe::CreationContext) -> Self {
         let character = Character::default();
@@ -99,12 +98,12 @@ impl CharacterApp {
 
     fn matching_trait_checks(&mut self, this_trait: Traits, ctx: &egui::Context) {
         //change ability strike label
-        if determine_matching_trait(&mut self.character.mutation.main_trait, &this_trait) {
+        if determine_matching_trait(&self.character.mutation.main_trait, &this_trait) {
             let mut new_ability_strike = Character::calculate_ability_strike_trait(&self.character).to_string();
             change_label(&mut self.ability_strike_text, &mut new_ability_strike, ctx);
         }
         //change selected trait value label
-        if determine_matching_trait(&mut self.selected_trait, &this_trait) {
+        if determine_matching_trait(&self.selected_trait, &this_trait) {
             let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
             self.selected_trait_value = new_selected_trait_value;
             change_label(&mut self.selected_trait_value_text, &mut new_selected_trait_value.to_string(), ctx);
@@ -114,12 +113,8 @@ impl CharacterApp {
     }
 }
 
-fn determine_matching_trait(main_trait: &mut Traits, this_trait: &Traits) -> bool {
-    if main_trait == this_trait {
-        true
-    } else {
-        false
-    }
+fn determine_matching_trait(main_trait: &Traits, this_trait: &Traits) -> bool {
+     main_trait == this_trait 
 }
 
 pub fn calculate_display_success(cam_value: u8) -> u8 {
@@ -134,7 +129,7 @@ pub fn to_percentage_string(value: u8) -> String {
     format!("{} %", value)
 }
 
-pub fn change_label(label_text: &mut String, new_label_text: &mut String, ctx: &egui::Context) {
+pub fn change_label(label_text: &mut String, new_label_text: &mut str, ctx: &egui::Context) {
     label_text.clear();
     label_text.push_str(new_label_text);
     ctx.request_repaint();
@@ -142,8 +137,16 @@ pub fn change_label(label_text: &mut String, new_label_text: &mut String, ctx: &
 
 impl eframe::App for CharacterApp{
     fn update(&mut self, ctx: &egui::Context , _frame: &mut eframe::Frame) {
-        
-        egui::TopBottomPanel::top("menu").show(ctx, |ui| {
+     egui::TopBottomPanel::top("menu").frame(egui::Frame { inner_margin: egui::Margin { left: 0, right: 0, top: 0, bottom: 0 }, 
+            fill: egui::Color32::DARK_GRAY, 
+            stroke: egui::Stroke { width: 0.0, color: egui::Color32::BLACK }, 
+            corner_radius: egui::CornerRadius { nw: 0, ne: 0, sw: 0, se: 0 }, 
+            outer_margin: egui::Margin { left: 0, right: 0, top: 0, bottom: 0 }, 
+            shadow: egui::Shadow { offset: [0, 0], blur: 0, spread: 0, color: egui::Color32::BLACK} 
+            })
+            .show(ctx, |ui| {
+            egui::Grid::new("save row").show(ui, |ui| {
+
             if ui.button("Pick file").clicked() {
                 // Open the file dialog to pick a file.
                 self.file_dialog.pick_file();
@@ -152,6 +155,7 @@ impl eframe::App for CharacterApp{
             if ui.button("Save").clicked() {
                 self.save_dialog.save_file();
             }
+            });
 
             ui.label(format!("Picked file: {:?}", self.picked_file));
 
@@ -198,10 +202,10 @@ impl eframe::App for CharacterApp{
             ui.heading("CAM");
             ui.label("Trait");
             egui::ComboBox::from_id_salt("Trait")
-                .selected_text(&self.selected_trait.to_string())
+                .selected_text(self.selected_trait.to_string())
                 .show_ui(ui, |ui|{
                     for main_trait in Traits::iterator() {
-                        if ui.selectable_value(&mut self.selected_trait, main_trait.clone(), &main_trait.to_string()).clicked() {
+                        if ui.selectable_value(&mut self.selected_trait, main_trait, main_trait.to_string()).clicked() {
                             //change selected trait value
                             let new_selected_trait_value = Character::get_trait_value(&self.character, &self.selected_trait);
                             self.selected_trait_value = new_selected_trait_value;
@@ -213,7 +217,7 @@ impl eframe::App for CharacterApp{
                 });
             ui.label(&self.selected_trait_value_text);
             for prof_level in Proficiency::iterator() {
-                if ui.add(egui::RadioButton::new(self.selected_proficiency == prof_level.clone(), &prof_level.to_string())).clicked()
+                if ui.add(egui::RadioButton::new(self.selected_proficiency == prof_level, prof_level.to_string())).clicked()
                 {
                     self.selected_proficiency = prof_level;
             
@@ -257,7 +261,7 @@ impl eframe::App for CharacterApp{
                         }); 
                         ui.end_row();
                     ui.label("main trait:");
-                    ui.label(&self.character.mutation.main_trait.to_string());
+                    ui.label(self.character.mutation.main_trait.to_string());
                     ui.end_row();
                     ui.label("Threat Level:");
                     ui.add(egui::Slider::new(&mut self.character.threat, 1..=10));
@@ -265,7 +269,7 @@ impl eframe::App for CharacterApp{
                     //Trait Section
                     ui.label("Strength:");
                     if ui.add(egui::Slider::new(&mut self.character.strength, 1..=100)).changed() {
-                        let mut new_str_mod = ((self.character.strength as i8 / 10 as i8) - 2 as i8).to_string();
+                        let mut new_str_mod = ((self.character.strength as i8 / 10_i8) - 2_i8).to_string();
                         change_label(&mut self.str_mod_text, &mut new_str_mod, ctx);
                         self.matching_trait_checks(Traits::Strength, ctx);
                         change_label(&mut self.melee_strike_text, &mut self.character.strength.to_string(), ctx);
@@ -275,7 +279,7 @@ impl eframe::App for CharacterApp{
 
                     ui.label("Discipline:");
                     if ui.add(egui::Slider::new(&mut self.character.discipline, 1..=100)).changed() {
-                        let mut new_dsc_mod = ((self.character.discipline as i8 / 10 as i8) - 2 as i8).to_string();
+                        let mut new_dsc_mod = ((self.character.discipline as i8 / 10_i8) - 2_i8).to_string();
                         change_label(&mut self.dsc_mod_text, &mut new_dsc_mod, ctx);
                         self.matching_trait_checks(Traits::Discipline, ctx);
                         change_label(&mut self.precision_strike_text, &mut self.character.discipline.to_string(), ctx);
@@ -284,7 +288,7 @@ impl eframe::App for CharacterApp{
                     ui.end_row();
                     ui.label("Constitution:");
                     if ui.add(egui::Slider::new(&mut self.character.constitution, 1..=100)).changed() {
-                        let mut new_con_mod = ((self.character.constitution as i8 / 10 as i8) - 2 as i8).to_string();
+                        let mut new_con_mod = ((self.character.constitution as i8 / 10_i8) - 2_i8).to_string();
                         change_label(&mut self.con_mod_text, &mut new_con_mod, ctx);
                         self.matching_trait_checks(Traits::Constitution, ctx);
                     };
@@ -293,7 +297,7 @@ impl eframe::App for CharacterApp{
 
                     ui.label("Intelligence:");
                     if ui.add(egui::Slider::new(&mut self.character.intelligence, 1..=100)).changed() {
-                        let mut new_int_mod = ((self.character.intelligence as i8 / 10 as i8) - 2 as i8).to_string();
+                        let mut new_int_mod = ((self.character.intelligence as i8 / 10_i8) - 2_i8).to_string();
                         change_label(&mut self.int_mod_text, &mut new_int_mod, ctx);
                         self.matching_trait_checks(Traits::Intelligence, ctx);
                     };
@@ -302,7 +306,7 @@ impl eframe::App for CharacterApp{
 
                     ui.label("Sense:");
                     if ui.add(egui::Slider::new(&mut self.character.sense, 1..=100)).changed() {
-                        let mut new_sns_mod = ((self.character.sense as i8 / 10 as i8) - 2 as i8).to_string();
+                        let mut new_sns_mod = ((self.character.sense as i8 / 10_i8) - 2_i8).to_string();
                         change_label(&mut self.sns_mod_text, &mut new_sns_mod, ctx);
                         self.matching_trait_checks(Traits::Sense, ctx);
                         change_label(&mut self.range_strike_text, &mut self.character.sense.to_string(), ctx);
@@ -312,7 +316,7 @@ impl eframe::App for CharacterApp{
 
                     ui.label("Will:");
                     if ui.add(egui::Slider::new(&mut self.character.will, 1..=100)).changed() {
-                        let mut new_wil_mod = ((self.character.will as i8 / 10 as i8) - 2 as i8).to_string();
+                        let mut new_wil_mod = ((self.character.will as i8 / 10_i8) - 2_i8).to_string();
                         change_label(&mut self.wil_mod_text, &mut new_wil_mod, ctx);
                         self.matching_trait_checks(Traits::Will, ctx);
                     };
@@ -347,7 +351,7 @@ impl eframe::App for CharacterApp{
                     for skill in &mut self.character.skills {
                         ui.label(&skill.name);
                         for prof_level in Proficiency::iterator() {
-                            ui.radio_value(&mut skill.proficiency_level, prof_level, &prof_level.to_string());
+                            ui.radio_value(&mut skill.proficiency_level, prof_level, prof_level.to_string());
                         }
                         ui.end_row();
                     }
@@ -364,7 +368,7 @@ impl eframe::App for CharacterApp{
                     for wep_prof in &mut self.character.weapon_proficiencies {
                         ui.label(&wep_prof.name);
                         for prof_level in Proficiency::iterator() {
-                            ui.radio_value(&mut wep_prof.proficiency_level, prof_level, &prof_level.to_string());
+                            ui.radio_value(&mut wep_prof.proficiency_level, prof_level, prof_level.to_string());
                         }
                         ui.end_row();
                     }

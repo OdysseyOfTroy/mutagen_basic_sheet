@@ -4,18 +4,15 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize,Deserialize, Clone, PartialEq, Copy)]
 #[serde(rename_all = "lowercase")]
+#[derive(Default)]
 pub enum Proficiency {
+    #[default]
     Untrained,
     Proficient,
     Expert,
     Master
 }
 
-impl Default for Proficiency {
-    fn default() -> Self {
-        Proficiency::Untrained
-    }
-}
 
 impl Proficiency {
     pub fn iterator() -> impl Iterator<Item = Proficiency> {
